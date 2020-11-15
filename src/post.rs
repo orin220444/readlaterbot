@@ -3,13 +3,15 @@ pub mod post {
     pub struct Post {
         pub original_url: String,
         pub real_url: Option<String>,
+        pub read: bool,
     }
 
     impl Post {
         pub fn new(original_url: String) -> Post {
             Post {
                 original_url,
-                real_url: None
+                real_url: None,
+                read: false
             }
         }
 
@@ -31,7 +33,11 @@ pub mod post {
             conn.execute(
 
                 "INSERT INTO post (original_url, real_url) VALUES (?1,?2)"
-            , params![self.original_url, self.real_url], )?;
+            , params![
+            self.original_url, 
+            self.real_url
+            ],
+            )?;
 Ok(())
         }
 pub async fn real_url(& mut self) -> & Post {
