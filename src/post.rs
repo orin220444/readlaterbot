@@ -1,7 +1,4 @@
-extern crate mongodb;
 pub mod post {
-use mongodb::{Client, options::ClientOptions, error::{Error }};
-
             use rusqlite::{params, Connection, Result};
     pub struct Post {
         pub original_url: String,
@@ -16,12 +13,8 @@ use mongodb::{Client, options::ClientOptions, error::{Error }};
             }
         }
 
-        pub async fn save_post(self, ) -> Result<(), Error> {
-                        match self.save_to_db().await {
-                Ok(_) => println!("mongodb test"),
-                Err(e) => println!("{:#?}", e
-                )
-            }
+        pub async fn save_post(self, ) -> Result<()> {
+                        self.save_to_db().await?;
             Ok(())
         }
 
@@ -41,7 +34,7 @@ use mongodb::{Client, options::ClientOptions, error::{Error }};
             , params![self.original_url, self.real_url], )?;
 Ok(())
         }
-pub async fn real_url<'a>(&'a mut self) -> &'a Post {
+pub async fn real_url(& mut self) -> & Post {
     match reqwest::get(&self.original_url.to_string()).await {
         Ok(res) => {
             //let body = &res.text().await?;
