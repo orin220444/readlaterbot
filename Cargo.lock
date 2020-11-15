@@ -31,6 +31,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "arquery"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d5a6afebb462e5866798302d033eaf160260d1d3c6c4af22ba3b7b2c5ab27b78"
+dependencies = [
+ "xml-rs",
+]
+
+[[package]]
 name = "async-trait"
 version = "0.1.41"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1835,6 +1844,7 @@ dependencies = [
 name = "teloxide-test-bot"
 version = "0.1.0"
 dependencies = [
+ "arquery",
  "dotenv",
  "log",
  "mongodb",
@@ -2394,4 +2404,13 @@ checksum = "d59cefebd0c892fa2dd6de581e937301d8552cb44489cdff035c6187cb63fa5e"
 dependencies = [
  "winapi 0.2.8",
  "winapi-build",
+]
+
+[[package]]
+name = "xml-rs"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3c1cb601d29fe2c2ac60a2b2e5e293994d87a1f6fa9687a31a15270f909be9c2"
+dependencies = [
+ "bitflags",
 ]
