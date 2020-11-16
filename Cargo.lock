@@ -880,6 +880,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "readlaterbot"
+version = "0.1.0"
+dependencies = [
+ "dotenv",
+ "log",
+ "pretty_env_logger",
+ "reqwest",
+ "rusqlite",
+ "teloxide",
+ "teloxide-macros",
+ "tokio",
+]
+
+[[package]]
 name = "redox_syscall"
 version = "0.1.57"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1131,20 +1145,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "teloxide-test-bot"
-version = "0.1.0"
-dependencies = [
- "dotenv",
- "log",
- "pretty_env_logger",
- "reqwest",
- "rusqlite",
- "teloxide",
- "teloxide-macros",
- "tokio",
 ]
 
 [[package]]
