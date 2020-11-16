@@ -22,8 +22,6 @@ pub mod link_finder {
                                         let text = &text_data.text;
                                         let start = entity.offset;
                                         let length = entity.length;
-                                        let stop = entity.length - length;
-                                        println!("start: {}, stop: {}, length: {}", start, stop, length);
                                         text.chars().skip(start).take(length).collect()
                                     };
                                     println!("{:#?}", url);
