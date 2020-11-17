@@ -1,6 +1,6 @@
 extern crate dotenv;
 use dotenv::dotenv;
-use teloxide::prelude::*;
+use teloxide::{prelude::*, utils::command::BotCommand};
 mod link_finder;
 mod post;
 use post::post::Post;
@@ -9,16 +9,33 @@ async fn main() {
     dotenv().ok();
     run_bot().await;
 }
-
+#[derive(BotCommand, Debug)]
+#[command(rename = "lowercase")]
+enum Command {
+    Random,
+}
+async fn command_answer(cx: UpdateWithCx<Message>, command: Command){
+match command {
+    Command::Random => { match cx.answer("test").send().await {
+    Ok(_) => {},
+    Err(e) => {println!("error while sending: {:#?}", e);}
+    };
+    }
+}
+}
 async fn run_bot() {
     teloxide::enable_logging!();
     log::info!("Starting dices_bot...");
 
     let bot = Bot::from_env();
-
-    teloxide::repl(bot, |message| async move {
-        println!("{:#?}", &message.update.kind);
-        let urls = link_finder::link_finder::link_finder(&message);
+async fn handle_message(cx: UpdateWithCx<Message>){
+    match cx.update.text(){
+    None => {}
+    Some(text) => {
+    if let Ok(command) = Command::parse(text, "test_name_bot") {command_answer(cx, command).await;}
+    else {
+        println!("{:#?}", &cx.update.kind);
+        let urls = link_finder::link_finder::link_finder(&cx);
         match urls {
             None => println!("No urls!"),
             Some(urls) => {
@@ -34,11 +51,24 @@ async fn run_bot() {
             }
         }
 
-
         }
 
-        message.answer_dice().send().await?;
-        ResponseResult::<()>::Ok(())
+        cx.answer_dice().send().await;
+        //ResponseResult::<()>::Ok(())
+    }
+    }
+    }
+    };
+    //.await;
+  
+    Dispatcher::new(bot)
+        .messages_handler(|rx: DispatcherHandlerRx<Message>|{
+    rx.for_each_concurrent(None, |cx| async move {
+        println!("{:#?}", cx);
+        println!("{:#?}", cx.update);
+        handle_message(cx).await;
     })
-    .await;
+        })
+    
+    .dispatch().await;
 }
