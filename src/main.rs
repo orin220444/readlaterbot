@@ -14,25 +14,23 @@ async fn main() {
 enum Command {
     Random,
 }
-async fn command_answer(cx: UpdateWithCx<Message>, command: Command){
+async fn command_answer(cx: UpdateWithCx<Message>, command: Command) -> ResponseResult<()>{
 match command {
-    Command::Random => { match cx.answer("test").send().await {
-    Ok(_) => {},
-    Err(e) => {println!("error while sending: {:#?}", e);}
-    };
+    Command::Random => { cx.answer("test").send().await?;
+        ResponseResult::<()>::Ok(())
     }
 }
 }
-async fn run_bot() {
-    teloxide::enable_logging!();
-    log::info!("Starting dices_bot...");
-
-    let bot = Bot::from_env();
-async fn handle_message(cx: UpdateWithCx<Message>){
+async fn handle_message(cx: UpdateWithCx<Message>) -> ResponseResult<()>{
     match cx.update.text(){
-    None => {}
+    None => {
+ResponseResult::<()>::Ok(())
+    }
     Some(text) => {
-    if let Ok(command) = Command::parse(text, "test_name_bot") {command_answer(cx, command).await;}
+    if let Ok(command) = Command::parse(text, "test_name_bot") {
+        command_answer(cx, command).await?;
+        ResponseResult::<()>::Ok(())
+    }
     else {
         println!("{:#?}", &cx.update.kind);
         let urls = link_finder::link_finder::link_finder(&cx);
@@ -53,22 +51,30 @@ async fn handle_message(cx: UpdateWithCx<Message>){
 
         }
 
-        cx.answer_dice().send().await;
-        //ResponseResult::<()>::Ok(())
+        cx.answer_dice().send().await?;
+        ResponseResult::<()>::Ok(())
     }
     }
     }
-    };
+    }
+async fn run_bot() {
+    teloxide::enable_logging!();
+    log::info!("Starting dices_bot...");
+
+    let bot = Bot::from_env();
     //.await;
-  
+
     Dispatcher::new(bot)
         .messages_handler(|rx: DispatcherHandlerRx<Message>|{
     rx.for_each_concurrent(None, |cx| async move {
-        println!("{:#?}", cx);
-        println!("{:#?}", cx.update);
-        handle_message(cx).await;
+        match handle_message(cx).await {
+Ok(_) => {}
+Err(e) => {println!("Error while handling messages: {:#?}", e)
+
+}
+        };
     })
         })
-    
+
     .dispatch().await;
 }
