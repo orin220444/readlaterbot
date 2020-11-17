@@ -31,6 +31,7 @@ async fn run_bot() {
         println!("{:#?}", &message.update.kind);
         let urls = link_finder::link_finder::link_finder(&message);
         match urls {
+            None => println!("No urls!"),
             Some(urls) => {
                 println!("{:#?}", urls);
                 for url in urls {
@@ -43,7 +44,6 @@ async fn run_bot() {
 
             }
         }
-            None => println!("No urls!"),
 
         }
 

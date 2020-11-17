@@ -42,6 +42,7 @@ Ok(())
         }
 pub async fn real_url(& mut self) -> & Post {
     match reqwest::get(&self.original_url.to_string()).await {
+        Err(e) => {println!("{:#?}", e); self}
         Ok(res) => {
             //let body = &res.text().await?;
             println!("{:#?}", &res);
@@ -61,7 +62,6 @@ pub async fn real_url(& mut self) -> & Post {
 self.real_url = Some(real_url);
     self
         }
-        Err(e) => {println!("{:#?}", e); self}
     }
 
 

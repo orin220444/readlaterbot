@@ -1,5 +1,5 @@
 [package]
-name = "teloxide-test-bot"
+name = "readlaterbot"
 version = "0.1.0"
 authors = ["Orin Serimon <orin220444@protonmail.com>"]
 edition = "2018"
