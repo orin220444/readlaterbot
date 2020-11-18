@@ -66,5 +66,15 @@ self.real_url = Some(real_url);
 
 
 }
+pub fn getRandomPost(){
+            let path = "./readlaterdb.db3";
+            match Connection::open(&path) {
+                Err(e) => {println!("error while accessing db! {:#?}", e)},
+                Ok(conn) => {
+let dbData = conn.prepare("SELECT real_url FROM post");
+println!("{:#?}", dbData);
+}
+}
+}
     }
 }

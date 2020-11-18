@@ -3,6 +3,7 @@ use dotenv::dotenv;
 use teloxide::{prelude::*, utils::command::BotCommand};
 mod link_finder;
 mod post;
+mod random;
 use post::post::Post;
 #[tokio::main]
 async fn main() {
@@ -17,6 +18,7 @@ enum Command {
 async fn command_answer(cx: UpdateWithCx<Message>, command: Command) -> ResponseResult<()>{
 match command {
     Command::Random => { cx.answer("test").send().await?;
+        crate::random::random(cx);
         ResponseResult::<()>::Ok(())
     }
 }
