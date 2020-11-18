@@ -15,12 +15,14 @@ async fn main() {
 enum Command {
     Random,
 }
-async fn command_answer(cx: UpdateWithCx<Message>, command: Command) -> ResponseResult<()>{
-match command {
-    Command::Random => { cx.answer("test").send().await?;
-        crate::random::random(cx);
-        ResponseResult::<()>::Ok(())
-   }
+async fn command_answer(cx: UpdateWithCx<Message>, command: Command) -> ResponseResult<()> {
+    match command {
+        Command::Random => {
+            cx.answer("test").send().await?;
+            crate::random::random(cx).await;
+            ResponseResult::<()>::Ok(())
+        }
+    }
 }
 async fn handle_message(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
     match cx.update.text() {

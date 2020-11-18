@@ -1,5 +1,6 @@
 pub mod post {
     use rusqlite::{params, Connection, Result};
+    #[derive(Debug)]
     pub struct Post {
         pub original_url: String,
         pub real_url: Option<String>,
@@ -63,19 +64,19 @@ pub mod post {
                 }
             }
         }
-    }
-
-
-}
-pub fn getRandomPost(){
+        pub fn getRandomPost(self) -> Result<()> {
             let path = "./readlaterdb.db3";
-            match Connection::open(&path) {
-                Err(e) => {println!("error while accessing db! {:#?}", e)},
-                Ok(conn) => {
-let dbData = conn.prepare("SELECT real_url FROM post");
-println!("{:#?}", dbData);
-}
-}
-}
+            let conn = Connection::open(&path)?;
+
+            let mut dbData = conn.prepare("SELECT real_url FROM post")?;
+            let posts = dbData.query_map(params![], |row| Ok(Post::new(row.get(0)?)));
+            let urls = String::new();
+            for post in posts {
+                //    println!("{:?}", post)
+                //urls.push(post.original_url?);
+            }
+            println!("{:#?}", urls);
+            Ok(())
+        }
     }
 }
