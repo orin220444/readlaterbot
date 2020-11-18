@@ -18,7 +18,7 @@ pub mod link_finder {
                                 MessageEntityKind::Url => {
                                     println!("{:#?}", &text_data);
 
-                                    let url:String = {
+                                    let url: String = {
                                         let text = &text_data.text;
                                         let start = entity.offset;
                                         let length = entity.length;
@@ -27,7 +27,7 @@ pub mod link_finder {
                                     println!("{:#?}", url);
                                     urls.push(url.to_string());
                                     println!("{:#?}", &entity)
-                                },
+                                }
                                 _ => println!("No needed entities!"),
                             };
                         }
