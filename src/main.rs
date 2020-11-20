@@ -4,6 +4,8 @@ use teloxide::{prelude::*, utils::command::BotCommand};
 mod link_finder;
 mod post;
 mod random;
+mod delete;
+mod archive;
 use post::post::Post;
 #[tokio::main]
 async fn main() {
@@ -52,6 +54,22 @@ async fn handle_message(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
             }
         }
     }
+}
+async fn handle_callback_query(cx: UpdateWithCx<CallbackQuery>) -> ResponseResult<()> {
+    let data = &cx.update.data;
+match data {
+ None => {},
+ Some(data) => {
+     // TODO: ref using enums
+    if data == "del" {
+        crate::delete::delete(cx).await;
+    }
+    else if data == "archive"{
+        crate::archive::archive().await;
+    }
+}
+}
+Ok(())
 }
 async fn run_bot() {
     teloxide::enable_logging!();
