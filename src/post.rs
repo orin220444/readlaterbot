@@ -1,5 +1,6 @@
 pub mod post {
     use rusqlite::{params, Connection, Result};
+    #[derive(Debug)]
     pub struct Post {
         pub original_url: String,
         pub real_url: Option<String>,
@@ -24,15 +25,16 @@ pub mod post {
             let path = "./readlaterdb.db3";
             let conn = Connection::open(&path)?;
             conn.execute(
-                "CREATE TABLE IF NOT EXISTS post (
+                "CREATE TABLE IF NOT EXISTS posts (
                         original_url    TEXT PRIMARY KEY,
                         real_url        TEXT
+                        read            BIT
                     )",
                 params![],
             )?;
             conn.execute(
-                "INSERT INTO post (original_url, real_url) VALUES (?1,?2)",
-                params![self.original_url, self.real_url],
+                "INSERT INTO post (original_url, real_url, read) VALUES (?1,?2, ?3)",
+                params![self.original_url, self.real_url, self.read],
             )?;
             Ok(())
         }
@@ -62,6 +64,47 @@ pub mod post {
                     self
                 }
             }
+        }
+        pub async fn get_all_posts() -> Result<Vec<Post>> {
+            let path = "./readlaterdb.db3";
+            let conn = Connection::open(&path)?;
+
+            let mut db_data = conn.prepare("SELECT original_url, real_url, read FROM post")?;
+            let db_posts = db_data.query_map(params![], |row| Ok(
+                    Post{
+                        original_url: row.get(0)?,
+                        real_url: row.get(1)?,
+                        read: row.get(2)?,
+                    }
+                    ));
+            match db_posts {
+                Err(e) => {
+               Err(e)
+                },
+                Ok(mapped_posts) => {
+           //rintln!("{:#?}", maposts);
+           //Ok(posts)
+            let mut posts = Vec::new();
+            for post in mapped_posts {
+                    println!("{:?}", &post);
+                posts.push(post?);
+            }
+            println!("{:#?}", posts);
+            Ok(posts)
+                }
+                }
+        }
+        pub async fn delete_post(original_url: &String) -> Result<()> {
+            let path = "./readlaterdb.db3";
+            let conn = Connection::open(&path)?;
+            conn.execute("DELETE FROM post WHERE original_url=?1", params![original_url])?;
+            Ok(())
+        }
+        pub async fn archive_post(original_url: &String) -> Result<()>{
+            let path = "./readlaterdb.db3";
+            let conn = Connection::open(&path)?;
+            conn.execute("UPDATE post SET read = 1 WHERE original_url=?1", params![original_url])?;
+            Ok(())
         }
     }
 }
