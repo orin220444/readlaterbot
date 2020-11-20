@@ -93,5 +93,11 @@ pub mod post {
                 }
                 }
         }
+        pub async fn delete_post(original_url: &String) -> Result<()> {
+            let path = "./readlaterdb.db3";
+            let conn = Connection::open(&path)?;
+            conn.execute("DELETE FROM post WHERE original_url=?1", params![original_url])?;
+            Ok(())
+        }
     }
 }
