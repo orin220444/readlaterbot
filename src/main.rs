@@ -1,6 +1,14 @@
 extern crate dotenv;
 use dotenv::dotenv;
-use teloxide::{prelude::*, utils::command::BotCommand};
+use teloxide::{
+    Bot, prelude::ResponseResult, prelude::{
+        Dispatcher, DispatcherHandlerRx, StreamExt, UpdateWithCx
+    },
+        types::{
+            CallbackQuery,
+            Message},
+            utils::command::BotCommand
+        };
 mod link_finder;
 mod post;
 mod random;
