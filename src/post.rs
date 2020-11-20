@@ -64,7 +64,7 @@ pub mod post {
                 }
             }
         }
-        pub fn getRandomPost() -> Result<()> {
+        pub async fn get_all_posts() -> Result<Vec<Post>> {
             let path = "./readlaterdb.db3";
             let conn = Connection::open(&path)?;
 
