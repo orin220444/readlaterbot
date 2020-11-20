@@ -68,11 +68,7 @@ pub mod post {
             let path = "./readlaterdb.db3";
             let conn = Connection::open(&path)?;
 
-            let mut dbData = conn.prepare("SELECT real_url FROM post")?;
-            let db_posts = dbData.query_map(params![], |row| Ok(
-                    Post::new(
-                        row.get(0)?
-                        )
+            let mut db_data = conn.prepare("SELECT original_url, real_url FROM post")?;
                     ));
             match db_posts {
                 Err(e) => {println!("{:#?}", e);
