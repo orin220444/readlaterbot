@@ -69,21 +69,26 @@ pub mod post {
             let conn = Connection::open(&path)?;
 
             let mut db_data = conn.prepare("SELECT original_url, real_url FROM post")?;
+            let db_posts = db_data.query_map(params![], |row| Ok(
+                    Post{
+                        original_url: row.get(0)?,
+                        real_url: row.get(1)?,
+                    }
                     ));
             match db_posts {
-                Err(e) => {println!("{:#?}", e);
-                    Ok(())
-                
+                Err(e) => {
+               Err(e)
                 },
-                Ok(posts) => {
-            
-            let mut urls = Vec::new();
-            for post in posts {
+                Ok(mapped_posts) => {
+           //rintln!("{:#?}", maposts);
+           //Ok(posts)
+            let mut posts = Vec::new();
+            for post in mapped_posts {
                     println!("{:?}", &post);
-                urls.push(post?.original_url);
+                posts.push(post?);
             }
-            println!("{:#?}", urls);
-            Ok(())
+            println!("{:#?}", posts);
+            Ok(posts)
                 }
                 }
         }
