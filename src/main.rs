@@ -73,7 +73,7 @@ match data {
         crate::delete::delete(cx).await;
     }
     else if data == "archive"{
-        crate::archive::archive().await;
+        crate::archive::archive(cx).await;
     }
 }
 }
