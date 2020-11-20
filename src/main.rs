@@ -18,7 +18,6 @@ enum Command {
 async fn command_answer(cx: UpdateWithCx<Message>, command: Command) -> ResponseResult<()> {
     match command {
         Command::Random => {
-            cx.answer("test").send().await?;
             crate::random::random(cx).await;
             ResponseResult::<()>::Ok(())
         }
@@ -49,7 +48,6 @@ async fn handle_message(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
                     }
                 }
 
-                cx.answer_dice().send().await?;
                 ResponseResult::<()>::Ok(())
             }
         }
