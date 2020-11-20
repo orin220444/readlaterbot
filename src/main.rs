@@ -69,6 +69,15 @@ async fn run_bot() {
                 };
             })
         })
+    .callback_queries_handler(|rx: DispatcherHandlerRx<CallbackQuery>| {
+        rx.for_each_concurrent(None, |cx| async move {
+                            println!("New Callback query: {:#?}", &cx.update);
+                            match handle_callback_query(cx).await {
+                                Ok(_) => {}
+                                Err(e) => println!("Error while handling Callback queries: {:#?}", e),
+                            };
+        })
+    })
         .dispatch()
         .await;
 }
