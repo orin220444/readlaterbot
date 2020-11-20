@@ -64,19 +64,32 @@ pub mod post {
                 }
             }
         }
-        pub fn getRandomPost(self) -> Result<()> {
+        pub fn getRandomPost() -> Result<()> {
             let path = "./readlaterdb.db3";
             let conn = Connection::open(&path)?;
 
             let mut dbData = conn.prepare("SELECT real_url FROM post")?;
-            let posts = dbData.query_map(params![], |row| Ok(Post::new(row.get(0)?)));
-            let urls = String::new();
+            let db_posts = dbData.query_map(params![], |row| Ok(
+                    Post::new(
+                        row.get(0)?
+                        )
+                    ));
+            match db_posts {
+                Err(e) => {println!("{:#?}", e);
+                    Ok(())
+                
+                },
+                Ok(posts) => {
+            
+            let mut urls = Vec::new();
             for post in posts {
-                //    println!("{:?}", post)
-                //urls.push(post.original_url?);
+                    println!("{:?}", &post);
+                urls.push(post?.original_url);
             }
             println!("{:#?}", urls);
             Ok(())
+                }
+                }
         }
     }
 }
