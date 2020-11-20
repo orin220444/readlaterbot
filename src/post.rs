@@ -4,7 +4,7 @@ pub mod post {
     pub struct Post {
         pub original_url: String,
         pub real_url: Option<String>,
-        pub read: bool,
+   //     pub read: bool,
     }
 
     impl Post {
@@ -12,7 +12,7 @@ pub mod post {
             Post {
                 original_url,
                 real_url: None,
-                read: false,
+               // read: false,
             }
         }
 
@@ -73,6 +73,7 @@ pub mod post {
                     Post{
                         original_url: row.get(0)?,
                         real_url: row.get(1)?,
+                       // read: row.get(2)?,
                     }
                     ));
             match db_posts {
