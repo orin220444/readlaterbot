@@ -4,7 +4,7 @@ pub mod post {
     pub struct Post {
         pub original_url: String,
         pub real_url: Option<String>,
-   //     pub read: bool,
+        pub read: bool,
     }
 
     impl Post {
@@ -12,7 +12,7 @@ pub mod post {
             Post {
                 original_url,
                 real_url: None,
-               // read: false,
+                read: false,
             }
         }
 
@@ -25,15 +25,16 @@ pub mod post {
             let path = "./readlaterdb.db3";
             let conn = Connection::open(&path)?;
             conn.execute(
-                "CREATE TABLE IF NOT EXISTS post (
+                "CREATE TABLE IF NOT EXISTS posts (
                         original_url    TEXT PRIMARY KEY,
                         real_url        TEXT
+                        read            BIT
                     )",
                 params![],
             )?;
             conn.execute(
-                "INSERT INTO post (original_url, real_url) VALUES (?1,?2)",
-                params![self.original_url, self.real_url],
+                "INSERT INTO post (original_url, real_url, read) VALUES (?1,?2, ?3)",
+                params![self.original_url, self.real_url, self.read],
             )?;
             Ok(())
         }
@@ -68,12 +69,12 @@ pub mod post {
             let path = "./readlaterdb.db3";
             let conn = Connection::open(&path)?;
 
-            let mut db_data = conn.prepare("SELECT original_url, real_url FROM post")?;
+            let mut db_data = conn.prepare("SELECT original_url, real_url, read FROM post")?;
             let db_posts = db_data.query_map(params![], |row| Ok(
                     Post{
                         original_url: row.get(0)?,
                         real_url: row.get(1)?,
-                       // read: row.get(2)?,
+                        read: row.get(2)?,
                     }
                     ));
             match db_posts {
