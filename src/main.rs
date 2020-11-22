@@ -49,7 +49,7 @@ async fn handle_message(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
                             match post.save_post().await {
                                 Ok(_) => {
                                     log::info!("Successful saved post");
-                                    cx.answer(text).send().await;
+                                    cx.answer(url).send().await;
                                 }
                                 Err(e) => println!("{:#?}", e),
                             }
