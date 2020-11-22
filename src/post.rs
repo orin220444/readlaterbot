@@ -94,6 +94,36 @@ pub mod post {
                 }
                 }
         }
+        
+        pub async fn get_unarchived_posts() -> Result<Vec<Post>> {
+            let path = "./readlaterdb.db3";
+            let conn = Connection::open(&path)?;
+
+            let mut db_data = conn.prepare("SELECT original_url, real_url, read FROM post WHERE read=0")?;
+            let db_posts = db_data.query_map(params![], |row| Ok(
+                    Post{
+                        original_url: row.get(0)?,
+                        real_url: row.get(1)?,
+                        read: row.get(2)?,
+                    }
+                    ));
+            match db_posts {
+                Err(e) => {
+               Err(e)
+                },
+                Ok(mapped_posts) => {
+           //rintln!("{:#?}", maposts);
+           //Ok(posts)
+            let mut posts = Vec::new();
+            for post in mapped_posts {
+                    println!("{:?}", &post);
+                posts.push(post?);
+            }
+            println!("{:#?}", posts);
+            Ok(posts)
+                }
+                }
+        }
         pub async fn delete_post(original_url: &String) -> Result<()> {
             let path = "./readlaterdb.db3";
             let conn = Connection::open(&path)?;
