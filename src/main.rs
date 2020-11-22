@@ -11,9 +11,7 @@ use teloxide::{
         };
 mod link_finder;
 mod post;
-mod random;
-mod delete;
-mod archive;
+mod handlers;
 use post::post::Post;
 #[tokio::main]
 async fn main() {
@@ -28,7 +26,7 @@ enum Command {
 async fn command_answer(cx: UpdateWithCx<Message>, command: Command) -> ResponseResult<()> {
     match command {
         Command::Random => {
-            crate::random::random(cx).await;
+            crate::handlers::random::random(cx).await;
             ResponseResult::<()>::Ok(())
         }
     }
@@ -70,10 +68,10 @@ match data {
  Some(data) => {
      // TODO: ref using enums
     if data == "del" {
-        crate::delete::delete(cx).await;
+        crate::handlers::delete::delete(cx).await;
     }
     else if data == "archive"{
-        crate::archive::archive(cx).await;
+        crate::handlers::archive::archive(cx).await;
     }
 }
 }
