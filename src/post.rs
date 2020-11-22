@@ -94,13 +94,13 @@ pub mod post {
                 }
                 }
         }
-        pub async fn delete_post(original_url: &String) -> Result<()> {
+        pub async fn delete_post(original_url: &str) -> Result<()> {
             let path = "./readlaterdb.db3";
             let conn = Connection::open(&path)?;
             conn.execute("DELETE FROM post WHERE original_url=?1", params![original_url])?;
             Ok(())
         }
-        pub async fn archive_post(original_url: &String) -> Result<()>{
+        pub async fn archive_post(original_url: &str) -> Result<()>{
             let path = "./readlaterdb.db3";
             let conn = Connection::open(&path)?;
             conn.execute("UPDATE post SET read = 1 WHERE original_url=?1", params![original_url])?;
