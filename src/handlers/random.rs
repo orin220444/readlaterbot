@@ -5,7 +5,7 @@ use teloxide::{
     types::{InlineKeyboardButton, InlineKeyboardButtonKind, InlineKeyboardMarkup, ReplyMarkup},
 };
 pub async fn random(cx: UpdateWithCx<Message>) {
-    match Post::get_all_posts().await {
+    match Post::get_unarchived_posts().await {
         Err(e) => {
             println!("{:#?}", &e)
         }
