@@ -2,7 +2,7 @@ extern crate dotenv;
 use dotenv::dotenv;
 use teloxide::{
     Bot, prelude::ResponseResult, prelude::{
-        Dispatcher, DispatcherHandlerRx, StreamExt, UpdateWithCx
+        Dispatcher, DispatcherHandlerRx, StreamExt, UpdateWithCx, Request
     },
         types::{
             CallbackQuery,
@@ -51,7 +51,8 @@ async fn handle_message(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
                             let mut post = Post::new(url);
                             post.real_url().await;
                             match post.save_post().await {
-                                Ok(_) => log::info!("Successful saved post"),
+                                Ok(_) => {log::info!("Successful saved post");
+                                    cx.answer(text).send().await;},
                                 Err(e) => println!("{:#?}", e),
                             }
                         }
