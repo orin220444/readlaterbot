@@ -44,7 +44,7 @@ async fn handle_message(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
                     Some(urls) => {
                         println!("{:#?}", urls);
                         for url in urls {
-                            let mut post = Post::new(url);
+                            let mut post = Post::new(&url);
                             post.real_url().await;
                             match post.save_post().await {
                                 Ok(_) => {

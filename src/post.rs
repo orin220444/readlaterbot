@@ -8,9 +8,9 @@ pub mod post {
     }
 
     impl Post {
-        pub fn new(original_url: String) -> Post {
+        pub fn new(original_url: &str) -> Post {
             Post {
-                original_url,
+                original_url: original_url.to_string(),
                 real_url: None,
                 read: false,
             }
