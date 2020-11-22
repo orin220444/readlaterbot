@@ -2,7 +2,7 @@ use crate::Post;
 use teloxide::{prelude::*, types::{InlineKeyboardMarkup, ReplyMarkup, InlineKeyboardButton, InlineKeyboardButtonKind}};
 use rand::seq::SliceRandom;
 pub async fn random(cx: UpdateWithCx<Message>){
-     match   Post::get_all_posts().await {
+     match   Post::get_unarchived_posts().await {
          Err(e) => {println!("{:#?}",&e)},
          Ok(posts) => {
     let random_post_opt = posts.choose(&mut rand::thread_rng());
