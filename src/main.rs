@@ -1,19 +1,15 @@
 extern crate dotenv;
 use dotenv::dotenv;
 use teloxide::{
-    Bot, prelude::ResponseResult, prelude::{
-        Dispatcher, DispatcherHandlerRx, StreamExt, UpdateWithCx
-    },
-        types::{
-            CallbackQuery,
-            Message},
-            utils::command::BotCommand
-        };
+    prelude::ResponseResult,
+    prelude::{Dispatcher, DispatcherHandlerRx, StreamExt, UpdateWithCx, Request},
+    types::{CallbackQuery, Message},
+    utils::command::BotCommand,
+    Bot,
+};
+mod handlers;
 mod link_finder;
 mod post;
-mod random;
-mod delete;
-mod archive;
 use post::post::Post;
 #[tokio::main]
 async fn main() {
@@ -28,7 +24,7 @@ enum Command {
 async fn command_answer(cx: UpdateWithCx<Message>, command: Command) -> ResponseResult<()> {
     match command {
         Command::Random => {
-            crate::random::random(cx).await;
+            crate::handlers::random::random(cx).await;
             ResponseResult::<()>::Ok(())
         }
     }
@@ -51,7 +47,10 @@ async fn handle_message(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
                             let mut post = Post::new(url);
                             post.real_url().await;
                             match post.save_post().await {
-                                Ok(_) => log::info!("Successful saved post"),
+                                Ok(_) => {
+                                    log::info!("Successful saved post");
+                                    cx.answer(text).send().await;
+                                }
                                 Err(e) => println!("{:#?}", e),
                             }
                         }
@@ -65,19 +64,18 @@ async fn handle_message(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
 }
 async fn handle_callback_query(cx: UpdateWithCx<CallbackQuery>) -> ResponseResult<()> {
     let data = &cx.update.data;
-match data {
- None => {},
- Some(data) => {
-     // TODO: ref using enums
-    if data == "del" {
-        crate::delete::delete(cx).await;
+    match data {
+        None => {}
+        Some(data) => {
+            // TODO: ref using enums
+            if data == "del" {
+                crate::handlers::delete::delete(cx).await;
+            } else if data == "archive" {
+                crate::handlers::archive::archive(cx).await;
+            }
+        }
     }
-    else if data == "archive"{
-        crate::archive::archive(cx).await;
-    }
-}
-}
-Ok(())
+    Ok(())
 }
 async fn run_bot() {
     teloxide::enable_logging!();
@@ -95,15 +93,15 @@ async fn run_bot() {
                 };
             })
         })
-    .callback_queries_handler(|rx: DispatcherHandlerRx<CallbackQuery>| {
-        rx.for_each_concurrent(None, |cx| async move {
-                            println!("New Callback query: {:#?}", &cx.update);
-                            match handle_callback_query(cx).await {
-                                Ok(_) => {}
-                                Err(e) => println!("Error while handling Callback queries: {:#?}", e),
-                            };
+        .callback_queries_handler(|rx: DispatcherHandlerRx<CallbackQuery>| {
+            rx.for_each_concurrent(None, |cx| async move {
+                println!("New Callback query: {:#?}", &cx.update);
+                match handle_callback_query(cx).await {
+                    Ok(_) => {}
+                    Err(e) => println!("Error while handling Callback queries: {:#?}", e),
+                };
+            })
         })
-    })
         .dispatch()
         .await;
 }
