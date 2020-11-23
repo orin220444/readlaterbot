@@ -2,7 +2,7 @@ extern crate dotenv;
 use dotenv::dotenv;
 use teloxide::{
     prelude::ResponseResult,
-    prelude::{Dispatcher, DispatcherHandlerRx, StreamExt, UpdateWithCx, Request},
+    prelude::{Dispatcher, DispatcherHandlerRx, Request, StreamExt, UpdateWithCx},
     types::{CallbackQuery, Message},
     utils::command::BotCommand,
     Bot,
@@ -10,7 +10,7 @@ use teloxide::{
 mod handlers;
 mod link_finder;
 mod post;
-use post::post::Post;
+use post::Post;
 #[tokio::main]
 async fn main() {
     dotenv().ok();
@@ -38,7 +38,7 @@ async fn handle_message(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
                 ResponseResult::<()>::Ok(())
             } else {
                 println!("{:#?}", &cx.update.kind);
-                let urls = link_finder::link_finder::link_finder(&cx);
+                let urls = link_finder::link_finder(&cx);
                 match urls {
                     None => println!("No urls!"),
                     Some(urls) => {
