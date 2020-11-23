@@ -49,7 +49,12 @@ async fn handle_message(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
                             match post.save_post().await {
                                 Ok(_) => {
                                     log::info!("Successful saved post");
-                                    cx.answer(url).send().await;
+                                    match cx.answer(url).send().await {
+                                        Ok(_) => {}
+                                        Err(e) => {
+                                            println!("Error while sending linkfinder url! {:#?}", e)
+                                        }
+                                    }
                                 }
                                 Err(e) => println!("{:#?}", e),
                             }
