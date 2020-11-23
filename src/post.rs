@@ -120,7 +120,7 @@ impl Post {
             }
         }
     }
-    pub async fn delete_post(original_url: &String) -> Result<()> {
+    pub async fn delete_post(original_url: &str) -> Result<()> {
         let path = "./readlaterdb.db3";
         let conn = Connection::open(&path)?;
         conn.execute(
