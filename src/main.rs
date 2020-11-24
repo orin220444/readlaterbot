@@ -20,11 +20,16 @@ async fn main() {
 #[command(rename = "lowercase")]
 enum Command {
     Random,
+    GetAllPosts,
 }
 async fn command_answer(cx: UpdateWithCx<Message>, command: Command) -> ResponseResult<()> {
     match command {
         Command::Random => {
             crate::handlers::random::random(cx).await;
+            ResponseResult::<()>::Ok(())
+        }
+        Command::GetAllPosts => {
+            crate::handlers::get_all_posts::get_all_posts(cx).await;
             ResponseResult::<()>::Ok(())
         }
     }
