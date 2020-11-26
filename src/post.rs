@@ -1,5 +1,7 @@
-use rusqlite::{params, Connection, Result};
-#[derive(Debug)]
+use rusqlite::{params, Connection, Result, NO_PARAMS};
+use serde_derive::{Deserialize, Serialize};
+use serde_rusqlite::*;
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Post {
     pub original_url: String,
     pub real_url: Option<String>,
@@ -29,11 +31,11 @@ impl Post {
                         real_url        TEXT
                         read            BIT
                     )",
-            params![],
+            NO_PARAMS,
         )?;
         conn.execute(
-            "INSERT INTO post (original_url, real_url, read) VALUES (?1,?2, ?3)",
-            params![self.original_url, self.real_url, self.read],
+            "INSERT INTO post (original_url, real_url, read) VALUES (:1,:2, :3)",
+            &to_params(&self).unwrap().to_slice(),
         )?;
         Ok(())
     }
@@ -66,31 +68,21 @@ impl Post {
     }
     pub async fn get_all_posts() -> Result<Vec<Post>> {
         let path = "./readlaterdb.db3";
-        let conn = Connection::open(&path)?;
+        let conn = Connection::open(&path).unwrap();
 
-        let mut db_data = conn.prepare("SELECT original_url, real_url, read FROM post")?;
-        let db_posts = db_data.query_map(params![], |row| {
-            Ok(Post {
-                original_url: row.get(0)?,
-                real_url: row.get(1)?,
-                read: row.get(2)?,
-            })
-        });
-        match db_posts {
-            Err(e) => Err(e),
-            Ok(mapped_posts) => {
-                //rintln!("{:#?}", maposts);
-                //Ok(posts)
-                let mut posts = Vec::new();
-                for post in mapped_posts {
-                    println!("{:?}", &post);
-                    posts.push(post?);
-                }
-                println!("{:#?}", posts);
-                Ok(posts)
-            }
-        }
+        let mut db_data = conn
+            .prepare("SELECT original_url, real_url, read FROM post").unwrap();
+let mut res = from_rows::<Post>(db_data.query(NO_PARAMS).unwrap());
+let mut posts = Vec::new();
+for post in res {
+    match post {
+        Ok(post) => posts.push(post),
+        Err(e) => println!("{:#?}", e)
     }
+
+    }
+    Ok(posts)
+}
 
     pub async fn get_unarchived_posts() -> Result<Vec<Post>> {
         let path = "./readlaterdb.db3";
@@ -98,27 +90,15 @@ impl Post {
 
         let mut db_data =
             conn.prepare("SELECT original_url, real_url, read FROM post WHERE read=0")?;
-        let db_posts = db_data.query_map(params![], |row| {
-            Ok(Post {
-                original_url: row.get(0)?,
-                real_url: row.get(1)?,
-                read: row.get(2)?,
-            })
-        });
-        match db_posts {
-            Err(e) => Err(e),
-            Ok(mapped_posts) => {
-                //rintln!("{:#?}", maposts);
-                //Ok(posts)
-                let mut posts = Vec::new();
-                for post in mapped_posts {
-                    println!("{:?}", &post);
-                    posts.push(post?);
-                }
-                println!("{:#?}", posts);
-                Ok(posts)
+let mut res = from_rows::<Post>(db_data.query(NO_PARAMS).unwrap());
+let mut posts = Vec::new();
+for post in res {
+    match post {
+        Ok(post) => posts.push(post),
+        Err(e) => println!("{:#?}", e)
+    }
             }
-        }
+                Ok(posts)
     }
     pub async fn delete_post(original_url: &str) -> Result<()> {
         let path = "./readlaterdb.db3";

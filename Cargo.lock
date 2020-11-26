@@ -899,6 +899,9 @@ dependencies = [
  "rand",
  "reqwest",
  "rusqlite",
+ "serde",
+ "serde_derive",
+ "serde_rusqlite",
  "teloxide",
  "teloxide-macros",
  "tokio",
@@ -1062,6 +1065,16 @@ checksum = "dcac07dbffa1c65e7f816ab9eba78eb142c6d44410f4eeba1e26e4f5dfa56b95"
 dependencies = [
  "itoa",
  "ryu",
+ "serde",
+]
+
+[[package]]
+name = "serde_rusqlite"
+version = "0.26.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1023b4e2409dc2daa72310e80f81627d7e499416f00d1d1d6a1f3f5eac133b14"
+dependencies = [
+ "rusqlite",
  "serde",
 ]
 
