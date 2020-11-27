@@ -1,7 +1,7 @@
 use rusqlite::{params, Connection, Result, NO_PARAMS};
-use serde_derive::{Deserialize, Serialize};
+use serde_derive::Deserialize;
 use serde_rusqlite::*;
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Deserialize, Debug, PartialEq)]
 pub struct Post {
     pub original_url: String,
     pub real_url: Option<String>,
@@ -34,8 +34,8 @@ impl Post {
             NO_PARAMS,
         )?;
         conn.execute(
-            "INSERT INTO post (original_url, real_url, read) VALUES (:1,:2, :3)",
-            &to_params(&self).unwrap().to_slice(),
+            "INSERT INTO post (original_url, real_url, read) VALUES (?1, ?2, ?3)",
+            params![&self.original_url, &self.real_url, &self.read],
         )?;
         Ok(())
     }
