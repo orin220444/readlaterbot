@@ -71,18 +71,18 @@ impl Post {
         let conn = Connection::open(&path).unwrap();
 
         let mut db_data = conn
-            .prepare("SELECT original_url, real_url, read FROM post").unwrap();
-let mut res = from_rows::<Post>(db_data.query(NO_PARAMS).unwrap());
-let mut posts = Vec::new();
-for post in res {
-    match post {
-        Ok(post) => posts.push(post),
-        Err(e) => println!("{:#?}", e)
+            .prepare("SELECT original_url, real_url, read FROM post")
+            .unwrap();
+        let mut res = from_rows::<Post>(db_data.query(NO_PARAMS).unwrap());
+        let mut posts = Vec::new();
+        for post in res {
+            match post {
+                Ok(post) => posts.push(post),
+                Err(e) => println!("{:#?}", e),
+            }
+        }
+        Ok(posts)
     }
-
-    }
-    Ok(posts)
-}
 
     pub async fn get_unarchived_posts() -> Result<Vec<Post>> {
         let path = "./readlaterdb.db3";
@@ -90,15 +90,15 @@ for post in res {
 
         let mut db_data =
             conn.prepare("SELECT original_url, real_url, read FROM post WHERE read=0")?;
-let mut res = from_rows::<Post>(db_data.query(NO_PARAMS).unwrap());
-let mut posts = Vec::new();
-for post in res {
-    match post {
-        Ok(post) => posts.push(post),
-        Err(e) => println!("{:#?}", e)
-    }
+        let mut res = from_rows::<Post>(db_data.query(NO_PARAMS).unwrap());
+        let mut posts = Vec::new();
+        for post in res {
+            match post {
+                Ok(post) => posts.push(post),
+                Err(e) => println!("{:#?}", e),
             }
-                Ok(posts)
+        }
+        Ok(posts)
     }
     pub async fn delete_post(original_url: &str) -> Result<()> {
         let path = "./readlaterdb.db3";
