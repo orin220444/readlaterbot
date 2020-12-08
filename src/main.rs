@@ -38,33 +38,7 @@ async fn handle_message(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
                 command_answer(cx, command).await?;
                 ResponseResult::<()>::Ok(())
             } else {
-                println!("{:#?}", &cx.update.kind);
-                let urls = link_finder::link_finder(&cx);
-                match urls {
-                    None => println!("No urls!"),
-                    Some(urls) => {
-                        println!("{:#?}", urls);
-                        for url in urls {
-                            let mut post = Post::new(&url);
-                            post.real_url().await;
-                            match post.save_post().await {
-                                Ok(_) => {
-                                    log::info!("Successful saved post");
-                                    match cx.answer(url).reply_markup(keyboards::standart_keyboard())
-                                        .send().await {
-                                        Ok(_) => {}
-                                        Err(e) => {
-                                            println!("Error while sending linkfinder url! {:#?}", e)
-                                        }
-                                    }
-                                }
-                                Err(e) => println!("{:#?}", e),
-                            }
-                        }
-                    }
-                }
-
-                ResponseResult::<()>::Ok(())
+                handlers::add::add(cx).await
             }
         }
     }
