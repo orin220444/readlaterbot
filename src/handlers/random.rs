@@ -1,7 +1,7 @@
+use crate::keyboards;
 use crate::Post;
 use rand::seq::SliceRandom;
 use teloxide::prelude::*;
-use crate::keyboards;
 pub async fn random(cx: UpdateWithCx<Message>) {
     match Post::get_unarchived_posts().await {
         Err(e) => {

@@ -8,9 +8,9 @@ use teloxide::{
     Bot,
 };
 mod handlers;
+mod keyboards;
 mod link_finder;
 mod post;
-mod keyboards;
 use post::Post;
 #[tokio::main]
 async fn main() {
