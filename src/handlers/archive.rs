@@ -1,6 +1,6 @@
 use crate::Post;
 use teloxide::{
-    prelude::UpdateWithCx,
+    prelude::{Request, UpdateWithCx},
     types::{CallbackQuery, MediaKind, MessageKind},
 };
 pub async fn archive(cx: UpdateWithCx<CallbackQuery>) {
@@ -20,6 +20,11 @@ pub async fn archive(cx: UpdateWithCx<CallbackQuery>) {
         None => {}
         Some(url) => {
             Post::archive_post(url).await;
+            cx.bot
+                .answer_callback_query(cx.update.id)
+                .text("Archived!")
+                .send()
+                .await;
         }
     }
 }
