@@ -1,7 +1,7 @@
+use chrono::prelude::{DateTime, Utc};
 use rusqlite::{params, Connection, Result, NO_PARAMS};
 use serde_derive::Deserialize;
 use serde_rusqlite::*;
-use chrono::prelude::{Utc, DateTime};
 #[derive(Deserialize, Debug, PartialEq)]
 pub struct Post {
     pub original_url: String,
@@ -31,14 +31,20 @@ impl Post {
         conn.execute(
             "CREATE TABLE IF NOT EXISTS posts (
                         original_url    TEXT PRIMARY KEY,
-                        real_url        TEXT
-                        read            BIT
+                        real_url        TEXT,
+                        read            BIT,
+                        created         TEXT
                     )",
             NO_PARAMS,
         )?;
         conn.execute(
             "INSERT INTO posts (original_url, real_url, read, created) VALUES (?1, ?2, ?3, ?4)",
-            params![&self.original_url, &self.real_url, &self.read, &self.created],
+            params![
+                &self.original_url,
+                &self.real_url,
+                &self.read,
+                &self.created
+            ],
         )?;
         Ok(())
     }
