@@ -80,7 +80,7 @@ impl Post {
         let conn = Connection::open(&path).unwrap();
 
         let mut db_data = conn
-            .prepare("SELECT original_url, real_url, read FROM post")
+            .prepare("SELECT original_url, real_url, read FROM posts")
             .unwrap();
         let mut res = from_rows::<Post>(db_data.query(NO_PARAMS).unwrap());
         let mut posts = Vec::new();
@@ -98,7 +98,7 @@ impl Post {
         let conn = Connection::open(&path)?;
 
         let mut db_data =
-            conn.prepare("SELECT original_url, real_url, read FROM post WHERE read=0")?;
+            conn.prepare("SELECT original_url, real_url, read FROM posts WHERE read=0")?;
         let mut res = from_rows::<Post>(db_data.query(NO_PARAMS).unwrap());
         let mut posts = Vec::new();
         for post in res {
@@ -113,7 +113,7 @@ impl Post {
         let path = "./readlaterdb.db3";
         let conn = Connection::open(&path)?;
         conn.execute(
-            "DELETE FROM post WHERE original_url=?1",
+            "DELETE FROM posts WHERE original_url=?1",
             params![original_url],
         )?;
         Ok(())
@@ -122,7 +122,7 @@ impl Post {
         let path = "./readlaterdb.db3";
         let conn = Connection::open(&path)?;
         conn.execute(
-            "UPDATE post SET read = 1 WHERE original_url=?1",
+            "UPDATE posts SET read = 1 WHERE original_url=?1",
             params![original_url],
         )?;
         Ok(())
