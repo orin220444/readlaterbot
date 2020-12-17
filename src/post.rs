@@ -1,11 +1,13 @@
 use rusqlite::{params, Connection, Result, NO_PARAMS};
 use serde_derive::Deserialize;
 use serde_rusqlite::*;
+use chrono::prelude::{Utc, DateTime};
 #[derive(Deserialize, Debug, PartialEq)]
 pub struct Post {
     pub original_url: String,
     pub real_url: Option<String>,
     pub read: bool,
+    pub created: String,
 }
 
 impl Post {
@@ -14,6 +16,7 @@ impl Post {
             original_url: original_url.to_string(),
             real_url: None,
             read: false,
+            created: Utc::now().to_string(),
         }
     }
 
@@ -34,8 +37,8 @@ impl Post {
             NO_PARAMS,
         )?;
         conn.execute(
-            "INSERT INTO post (original_url, real_url, read) VALUES (?1, ?2, ?3)",
-            params![&self.original_url, &self.real_url, &self.read],
+            "INSERT INTO posts (original_url, real_url, read, created) VALUES (?1, ?2, ?3, ?4)",
+            params![&self.original_url, &self.real_url, &self.read, &self.created],
         )?;
         Ok(())
     }
