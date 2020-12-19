@@ -11,6 +11,7 @@ mod handlers;
 mod keyboards;
 mod link_finder;
 mod post;
+mod db;
 use post::Post;
 #[tokio::main]
 async fn main() {

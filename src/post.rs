@@ -1,8 +1,8 @@
 use chrono::prelude::{DateTime, Utc};
 use rusqlite::{params, Connection, Result, NO_PARAMS};
-use serde_derive::Deserialize;
+use serde_derive::{Deserialize, Serialize};
 use serde_rusqlite::*;
-#[derive(Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Post {
     pub original_url: String,
     pub real_url: Option<String>,
@@ -26,26 +26,7 @@ impl Post {
     }
 
     async fn save_to_db(self) -> Result<()> {
-        let path = "./readlaterdb.db3";
-        let conn = Connection::open(&path)?;
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS posts (
-                        original_url    TEXT PRIMARY KEY,
-                        real_url        TEXT,
-                        read            BIT,
-                        created         TEXT
-                    )",
-            NO_PARAMS,
-        )?;
-        conn.execute(
-            "INSERT INTO posts (original_url, real_url, read, created) VALUES (?1, ?2, ?3, ?4)",
-            params![
-                &self.original_url,
-                &self.real_url,
-                &self.read,
-                &self.created
-            ],
-        )?;
+        crate::db::db::insert(&self, "posts".to_string(), "original_url, real_url, read, created".to_string() , ":original_url, :real_url, :read, :created".to_string())?;
         Ok(())
     }
     pub async fn real_url(&mut self) -> &Post {
