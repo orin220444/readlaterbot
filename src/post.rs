@@ -26,7 +26,7 @@ impl Post {
     }
 
     async fn save_to_db(self) -> Result<()> {
-        crate::db::db::insert(&self, "posts".to_string(), "original_url, real_url, read, created".to_string() , ":original_url, :real_url, :read, :created".to_string())?;
+        crate::db::db::insert_one(&self, "posts".to_string(), "original_url, real_url, read, created".to_string() , ":original_url, :real_url, :read, :created".to_string())?;
         Ok(())
     }
     pub async fn real_url(&mut self) -> &Post {
