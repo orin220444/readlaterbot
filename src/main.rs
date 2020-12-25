@@ -27,7 +27,7 @@ enum Command {
 async fn command_answer(cx: UpdateWithCx<Message>, command: Command) -> Result<()> {
     match command {
         Command::Random => {
-            crate::handlers::random::random(cx).await;
+            crate::handlers::random::random(cx).await?;
             Ok(())
         }
     }

@@ -13,9 +13,8 @@ pub async fn random(cx: UpdateWithCx<Message>) -> Result<()> {
             Ok(())
         }
         Some(random_post) => {
-            cx.answer(/*format!("{:#?}", */ &random_post.original_url)
+            cx.answer(&random_post.original_url)
                 .reply_markup(keyboards::standart_keyboard())
-                /*)*/
                 .send()
                 .await?;
             Ok(())

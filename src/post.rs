@@ -42,7 +42,6 @@ impl Post {
                 self
             }
             Ok(res) => {
-                //let body = &res.text().await?;
                 println!("{:#?}", &res);
                 let real_url = {
                     let mut host: String = String::new();
