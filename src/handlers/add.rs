@@ -1,11 +1,12 @@
 use crate::keyboards;
 use crate::link_finder;
 use crate::post::Post;
+use anyhow::Result;
 use teloxide::{
     prelude::{Request, ResponseResult, UpdateWithCx},
     types::Message,
 };
-pub async fn add(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
+pub async fn add(cx: UpdateWithCx<Message>) -> Result<()> {
     println!("{:#?}", &cx.update.kind);
     let urls = link_finder::link_finder(&cx);
     match urls {
@@ -36,5 +37,5 @@ pub async fn add(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
         }
     }
 
-    ResponseResult::<()>::Ok(())
+    Ok(())
 }

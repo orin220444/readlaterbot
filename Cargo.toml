@@ -18,6 +18,7 @@ serde_rusqlite = "0.26.0"
 serde_derive = "*"
 serde = "*"
 chrono = "0.4"
+anyhow = "1.0"
 [dependencies.tokio]
 version =  "0.2.11"
 features = ["rt-threaded", "macros"]

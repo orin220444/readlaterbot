@@ -1,7 +1,8 @@
+use crate::db::db;
+use anyhow::Result;
 use chrono::prelude::{DateTime, Utc};
 use serde_derive::{Deserialize, Serialize};
 use serde_rusqlite::*;
-use crate::db::db;
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Post {
     pub original_url: String,
@@ -26,7 +27,12 @@ impl Post {
     }
 
     async fn save_to_db(self) -> Result<()> {
-        db::insert_one(&self, "posts".to_string(), "original_url, real_url, read, created".to_string() , ":original_url, :real_url, :read, :created".to_string())?;
+        db::insert_one(
+            &self,
+            "posts".to_string(),
+            "original_url, real_url, read, created".to_string(),
+            ":original_url, :real_url, :read, :created".to_string(),
+        )?;
         Ok(())
     }
     pub async fn real_url(&mut self) -> &Post {
@@ -58,16 +64,26 @@ impl Post {
     }
     pub async fn get_all_posts(self) -> Result<Vec<Post>> {
         Ok(db::get_all("posts".to_string(), &self)?)
-
     }
 
     pub async fn get_unarchived_posts(self) -> Result<Vec<Post>> {
-        Ok(db::get_specific("posts".to_string(), &self, "read = 0".to_string())?)
+        Ok(db::get_specific(
+            "posts".to_string(),
+            &self,
+            "read = 0".to_string(),
+        )?)
     }
     pub async fn delete_post(original_url: &str) -> Result<()> {
-        Ok(db::delete("posts".to_string(), format!("original_url: {}", original_url))?)
+        Ok(db::delete(
+            "posts".to_string(),
+            format!("original_url: {}", original_url),
+        )?)
     }
     pub async fn archive_post(original_url: &str) -> Result<()> {
-        Ok(db::update("posts".to_string(), "read = 1".to_string(), format!("original_url: {}", original_url))?)
+        Ok(db::update(
+            "posts".to_string(),
+            "read = 1".to_string(),
+            format!("original_url: {}", original_url),
+        )?)
     }
 }

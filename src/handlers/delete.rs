@@ -1,9 +1,10 @@
 use crate::Post;
+use anyhow::Result;
 use teloxide::{
     prelude::{Request, UpdateWithCx},
     types::{CallbackQuery, MediaKind, MessageKind},
 };
-pub async fn delete(cx: UpdateWithCx<CallbackQuery>) {
+pub async fn delete(cx: UpdateWithCx<CallbackQuery>) -> Result<()> {
     let url: Option<&String> = {
         match &cx.update.message {
             None => None,
@@ -17,21 +18,22 @@ pub async fn delete(cx: UpdateWithCx<CallbackQuery>) {
         }
     };
     match url {
-        None => {}
+        None => Ok(()),
         Some(url) => {
-            Post::delete_post(url).await;
+            Post::delete_post(url).await?;
             cx.bot
                 .answer_callback_query(cx.update.id)
                 .text("Deleted!")
                 .send()
-                .await;
+                .await?;
             if let Some(message) = cx.update.message {
                 println!("test");
                 cx.bot
                     .delete_message(message.chat.id, message.id)
                     .send()
-                    .await;
+                    .await?;
             }
+            Ok(())
         }
     }
 }

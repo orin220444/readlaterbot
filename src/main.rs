@@ -1,4 +1,5 @@
 extern crate dotenv;
+use anyhow::Result;
 use dotenv::dotenv;
 use teloxide::{
     prelude::ResponseResult,
@@ -7,11 +8,11 @@ use teloxide::{
     utils::command::BotCommand,
     Bot,
 };
+mod db;
 mod handlers;
 mod keyboards;
 mod link_finder;
 mod post;
-mod db;
 use post::Post;
 #[tokio::main]
 async fn main() {
@@ -23,28 +24,29 @@ async fn main() {
 enum Command {
     Random,
 }
-async fn command_answer(cx: UpdateWithCx<Message>, command: Command) -> ResponseResult<()> {
+async fn command_answer(cx: UpdateWithCx<Message>, command: Command) -> Result<()> {
     match command {
         Command::Random => {
             crate::handlers::random::random(cx).await;
-            ResponseResult::<()>::Ok(())
+            Ok(())
         }
     }
 }
-async fn handle_message(cx: UpdateWithCx<Message>) -> ResponseResult<()> {
+async fn handle_message(cx: UpdateWithCx<Message>) -> Result<()> {
     match cx.update.text() {
-        None => ResponseResult::<()>::Ok(()),
+        None => Ok(()),
         Some(text) => {
             if let Ok(command) = Command::parse(text, "test_name_bot") {
                 command_answer(cx, command).await?;
-                ResponseResult::<()>::Ok(())
+                Ok(())
             } else {
-                handlers::add::add(cx).await
+                handlers::add::add(cx).await?;
+                Ok(())
             }
         }
     }
 }
-async fn handle_callback_query(cx: UpdateWithCx<CallbackQuery>) -> ResponseResult<()> {
+async fn handle_callback_query(cx: UpdateWithCx<CallbackQuery>) -> Result<()> {
     let data = &cx.update.data;
     match data {
         None => {}
