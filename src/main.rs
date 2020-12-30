@@ -65,7 +65,9 @@ async fn run_bot() {
     teloxide::enable_logging!();
     log::info!("Starting dices_bot...");
 
-    let bot = Bot::from_env();
+    let bot = teloxide::Bot::builder()
+        .token(std::env::var("TELEGRAM_BOT_TOKEN").unwrap())
+        .build();
     //.await;
 
     Dispatcher::new(bot)
