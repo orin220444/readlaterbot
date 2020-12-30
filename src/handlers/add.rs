@@ -3,7 +3,7 @@ use crate::link_finder;
 use crate::post::Post;
 use anyhow::Result;
 use teloxide::{
-    prelude::{Request, ResponseResult, UpdateWithCx},
+    prelude::{Request, UpdateWithCx},
     types::Message,
 };
 pub async fn add(cx: UpdateWithCx<Message>) -> Result<()> {

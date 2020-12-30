@@ -2,11 +2,9 @@ extern crate dotenv;
 use anyhow::Result;
 use dotenv::dotenv;
 use teloxide::{
-    prelude::ResponseResult,
-    prelude::{Dispatcher, DispatcherHandlerRx, Request, StreamExt, UpdateWithCx},
+    prelude::{Dispatcher, DispatcherHandlerRx, StreamExt, UpdateWithCx},
     types::{CallbackQuery, Message},
     utils::command::BotCommand,
-    Bot,
 };
 mod db;
 mod handlers;
@@ -68,7 +66,6 @@ async fn run_bot() {
     let bot = teloxide::Bot::builder()
         .token(std::env::var("TELEGRAM_BOT_TOKEN").unwrap())
         .build();
-    //.await;
 
     Dispatcher::new(bot)
         .messages_handler(|rx: DispatcherHandlerRx<Message>| {

@@ -1,6 +1,6 @@
 use crate::db::db;
 use anyhow::Result;
-use chrono::prelude::{DateTime, Utc};
+use chrono::prelude::Utc;
 use serde_derive::{Deserialize, Serialize};
 use serde_rusqlite::*;
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
