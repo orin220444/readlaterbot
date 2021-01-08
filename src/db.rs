@@ -1,39 +1,64 @@
 use anyhow::Result;
+use mongodb::{
+    bson::Document,
+    options::{
+        ClientOptions, FindOneAndDeleteOptions, FindOneAndUpdateOptions, FindOneOptions,
+        FindOptions, InsertOneOptions, UpdateModifications,
+    },
+    Client, Cursor, Database,
+};
 use serde::{de::DeserializeOwned, ser::Serialize};
-use mongodb::{Client, options::{ClientOptions, InsertOneOptions, FindOneAndDeleteOptions, FindOneOptions, FindOneAndUpdateOptions, UpdateModifications, FindOptions}, Database, bson::Document, Cursor};
 pub struct Db;
 impl Db {
-    async fn connect() -> Result<Database>{
-let mut client_options = ClientOptions::parse(&std::env::var("MONGODB_URL")?).await?;
-let client = Client::with_options(client_options)?;
-let db = client.database(&std::env::var("MONGODB_DB_NAME")?);
-Ok(db)
+    async fn connect() -> Result<Database> {
+        let mut client_options = ClientOptions::parse(&std::env::var("MONGODB_URL")?).await?;
+        let client = Client::with_options(client_options)?;
+        let db = client.database(&std::env::var("MONGODB_DB_NAME")?);
+        Ok(db)
     }
-    pub async fn insert_one(collection: String, doc:Document, options: impl Into<Option<InsertOneOptions>>) -> Result<()> {
-let db = Self::connect().await?;
-let coll = db.collection(&collection);
-coll.insert_one(doc, options).await?;
-Ok(())
+    pub async fn insert_one(
+        collection: String,
+        doc: Document,
+        options: impl Into<Option<InsertOneOptions>>,
+    ) -> Result<()> {
+        let db = Self::connect().await?;
+        let coll = db.collection(&collection);
+        coll.insert_one(doc, options).await?;
+        Ok(())
     }
-    pub async fn delete_one(collection: String, filter: Document, options: impl Into<Option<FindOneAndDeleteOptions>>) -> Result<Option<Document>> {
+    pub async fn delete_one(
+        collection: String,
+        filter: Document,
+        options: impl Into<Option<FindOneAndDeleteOptions>>,
+    ) -> Result<Option<Document>> {
         let db = Self::connect().await?;
         let coll = db.collection(&collection);
         Ok(coll.find_one_and_delete(filter, options).await?)
     }
-    pub async fn find_one(collection: String, filter: Document, options: impl Into<Option<FindOneOptions>>) -> Result<Option<Document>>{
+    pub async fn find_one(
+        collection: String,
+        filter: Document,
+        options: impl Into<Option<FindOneOptions>>,
+    ) -> Result<Option<Document>> {
         let db = Self::connect().await?;
         let coll = db.collection(&collection);
         Ok(coll.find_one(filter, options).await?)
     }
-    pub async fn update(collection: String, filter: Document, update: impl Into<UpdateModifications>, options: impl Into<Option<FindOneAndUpdateOptions>> )-> Result<Option<Document>>
-    {
-let db = Self::connect().await?;
-let coll = db.collection(&collection);
-Ok(coll.find_one_and_update(filter, update, options).await?)
+    pub async fn update(
+        collection: String,
+        filter: Document,
+        update: impl Into<UpdateModifications>,
+        options: impl Into<Option<FindOneAndUpdateOptions>>,
+    ) -> Result<Option<Document>> {
+        let db = Self::connect().await?;
+        let coll = db.collection(&collection);
+        Ok(coll.find_one_and_update(filter, update, options).await?)
     }
-    pub async fn find(collection: String, filter: Document, options: impl Into<Option<FindOptions>>)
-    -> Result<Cursor>
-    {
+    pub async fn find(
+        collection: String,
+        filter: Document,
+        options: impl Into<Option<FindOptions>>,
+    ) -> Result<Cursor> {
         let db = Self::connect().await?;
         let coll = db.collection(&collection);
         Ok(coll.find(filter, options).await?)
