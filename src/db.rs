@@ -1,62 +1,41 @@
 use anyhow::Result;
-use rusqlite::Connection;
-use rusqlite::NO_PARAMS;
 use serde::{de::DeserializeOwned, ser::Serialize};
-use serde_rusqlite::*;
-pub struct db;
-impl db {
-    fn connect() -> Result<Connection> {
-        let path = "./readlaterdb.db3";
-        let conn = Connection::open(&path)?;
-        Ok(conn)
+use mongodb::{Client, options::{ClientOptions, InsertOneOptions, FindOneAndDeleteOptions, FindOneOptions, FindOneAndUpdateOptions, UpdateModifications, FindOptions}, Database, bson::Document, Cursor};
+pub struct Db;
+impl Db {
+    async fn connect() -> Result<Database>{
+let mut client_options = ClientOptions::parse(&std::env::var("MONGODB_URL")?).await?;
+let client = Client::with_options(client_options)?;
+let db = client.database(&std::env::var("MONGODB_DB_NAME")?);
+Ok(db)
     }
-    pub fn insert_one<T>(data: &T, table: String, fields: String, values: String) -> Result<()>
-    where
-        T: Serialize,
+    pub async fn insert_one(collection: String, doc:Document, options: impl Into<Option<InsertOneOptions>>) -> Result<()> {
+let db = Self::connect().await?;
+let coll = db.collection(&collection);
+coll.insert_one(doc, options).await?;
+Ok(())
+    }
+    pub async fn delete_one(collection: String, filter: Document, options: impl Into<Option<FindOneAndDeleteOptions>>) -> Result<Option<Document>> {
+        let db = Self::connect().await?;
+        let coll = db.collection(&collection);
+        Ok(coll.find_one_and_delete(filter, options).await?)
+    }
+    pub async fn find_one(collection: String, filter: Document, options: impl Into<Option<FindOneOptions>>) -> Result<Option<Document>>{
+        let db = Self::connect().await?;
+        let coll = db.collection(&collection);
+        Ok(coll.find_one(filter, options).await?)
+    }
+    pub async fn update(collection: String, filter: Document, update: impl Into<UpdateModifications>, options: impl Into<Option<FindOneAndUpdateOptions>> )-> Result<Option<Document>>
     {
-        let conn = Self::connect()?;
-        conn.execute_named(
-            &format!("INSERT INTO {} ({}) VALUES {}]", table, fields, values),
-            &to_params_named(data).unwrap().to_slice(),
-        )?;
-        Ok(())
+let db = Self::connect().await?;
+let coll = db.collection(&collection);
+Ok(coll.find_one_and_update(filter, update, options).await?)
     }
-    pub fn get_all<T>(table: String, _: &T) -> Result<Vec<T>>
-    where
-        T: DeserializeOwned,
+    pub async fn find(collection: String, filter: Document, options: impl Into<Option<FindOptions>>)
+    -> Result<Cursor>
     {
-        let conn = Self::connect()?;
-        let mut statement = conn.prepare(&format!("SELECT * FROM {}", table))?;
-        let mut rows = from_rows::<T>(statement.query(NO_PARAMS).unwrap());
-        let row = rows.map(|data| data.unwrap()).collect(); //                        .collect::<Vec<T>>?;
-
-        Ok(row)
-    }
-    pub fn get_specific<T>(table: String, _: &T, condition: String) -> Result<Vec<T>>
-    where
-        T: DeserializeOwned,
-    {
-        let conn = Self::connect()?;
-        let mut statement =
-            conn.prepare(&format!("SELECT * FROM {} WHERE {}", table, condition))?;
-        let mut rows = from_rows::<T>(statement.query(NO_PARAMS).unwrap());
-        let row = rows.map(|data| data.unwrap()).collect();
-        Ok(row)
-    }
-    pub fn delete(table: String, condition: String) -> Result<()> {
-        let conn = Self::connect()?;
-        conn.execute(
-            &format!("DELETE FROM {} WHERE {}", table, condition),
-            NO_PARAMS,
-        )?;
-        Ok(())
-    }
-    pub fn update(table: String, set: String, condition: String) -> Result<()> {
-        let conn = Self::connect()?;
-        conn.execute(
-            &format!("UPDATE {} SET {} WHERE {}", table, set, condition),
-            NO_PARAMS,
-        )?;
-        Ok(())
+        let db = Self::connect().await?;
+        let coll = db.collection(&collection);
+        Ok(coll.find(filter, options).await?)
     }
 }

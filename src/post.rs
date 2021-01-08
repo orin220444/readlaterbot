@@ -1,8 +1,10 @@
-use crate::db::db;
+use crate::db::Db;
 use anyhow::Result;
 use chrono::prelude::{DateTime, Utc};
 use serde_derive::{Deserialize, Serialize};
-use serde_rusqlite::*;
+use futures::stream::StreamExt;
+use mongodb::bson::{doc, ser::to_document, de::from_document};
+use mongodb::bson::Document;
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Post {
     pub original_url: String,
@@ -26,14 +28,9 @@ impl Post {
         Ok(())
     }
 
-    async fn save_to_db(self) -> Result<()> {
-        db::insert_one(
-            &self,
-            "posts".to_string(),
-            "original_url, real_url, read, created".to_string(),
-            ":original_url, :real_url, :read, :created".to_string(),
-        )?;
-        Ok(())
+    async fn save_to_db(&self) -> Result<()> {
+        let bson_post = to_document(&self)?;
+        Ok(Db::insert_one("posts".to_string(), bson_post, None).await?)
     }
     pub async fn real_url(&mut self) -> &Post {
         match reqwest::get(&self.original_url.to_string()).await {
@@ -62,27 +59,46 @@ impl Post {
         }
     }
     pub async fn get_all_posts(self) -> Result<Vec<Post>> {
-        Ok(db::get_all("posts".to_string(), &self)?)
+        let filter = doc!{
+        };
+        let mut bson_data = Db::find("posts".to_string(), filter, None).await?;
+        let mut posts = Vec::new();
+        for doc in bson_data.next().await {
+                if doc.is_ok() == true {
+                posts.push(from_document::<Self>(doc.unwrap()).unwrap())
+            }
+        }
+        Ok(posts)
     }
 
-    pub async fn get_unarchived_posts(self) -> Result<Vec<Post>> {
-        Ok(db::get_specific(
-            "posts".to_string(),
-            &self,
-            "read = 0".to_string(),
-        )?)
+    pub async fn get_unarchived_posts() -> Result<Vec<Post>> {
+        let filter = doc!{
+            "read": false
+        };
+        let mut bson_data = Db::find("posts".to_string(), filter, None).await?;
+        let mut posts = Vec::new();
+        for doc in bson_data.next().await {
+                if doc.is_ok() == true {
+                posts.push(from_document::<Self>(doc.unwrap()).unwrap())
+            }
+        }
+        Ok(posts)
     }
     pub async fn delete_post(original_url: &str) -> Result<()> {
-        Ok(db::delete(
-            "posts".to_string(),
-            format!("original_url: {}", original_url),
-        )?)
+        let filter = doc!{
+            "original_url" : original_url,
+        };
+        let _ = Db::delete_one("posts".to_string(), filter, None).await?;
+        Ok(())
     }
     pub async fn archive_post(original_url: &str) -> Result<()> {
-        Ok(db::update(
-            "posts".to_string(),
-            "read = 1".to_string(),
-            format!("original_url: {}", original_url),
-        )?)
+    let filter = doc! {
+        "original_url": original_url,
+    };
+    let update = doc! {
+        "read": "true"
+    };
+    let _ = Db::update("posts".to_string(), filter, update, None).await?;
+    Ok(())
     }
 }
