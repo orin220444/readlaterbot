@@ -1,5 +1,10 @@
-pub mod add;
-pub mod archive;
-pub mod delete;
-pub mod random;
-//pub use {random,delete, archive};
+mod add; 
+mod archive;
+mod delete;
+mod random;
+
+
+pub use random::*;
+pub use add::*;
+pub use archive::*;
+pub use delete::*;

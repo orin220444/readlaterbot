@@ -25,7 +25,7 @@ enum Command {
 async fn command_answer(cx: UpdateWithCx<Message>, command: Command) -> Result<()> {
     match command {
         Command::Random => {
-            crate::handlers::random::random(cx).await?;
+            crate::handlers::random(cx).await?;
             Ok(())
         }
     }
@@ -38,7 +38,7 @@ async fn handle_message(cx: UpdateWithCx<Message>) -> Result<()> {
                 command_answer(cx, command).await?;
                 Ok(())
             } else {
-                handlers::add::add(cx).await?;
+                handlers::add(cx).await?;
                 Ok(())
             }
         }
@@ -51,9 +51,9 @@ async fn handle_callback_query(cx: UpdateWithCx<CallbackQuery>) -> Result<()> {
         Some(data) => {
             // TODO: ref using enums
             if data == "del" {
-                crate::handlers::delete::delete(cx).await;
+                crate::handlers::delete(cx).await;
             } else if data == "archive" {
-                crate::handlers::archive::archive(cx).await;
+                crate::handlers::archive(cx).await;
             }
         }
     }
