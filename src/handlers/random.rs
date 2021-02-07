@@ -4,7 +4,7 @@ use anyhow::Result;
 use rand::seq::SliceRandom;
 use teloxide::prelude::*;
 pub async fn random(cx: UpdateWithCx<Message>) -> Result<()> {
-    let posts = Post::get_unarchived_posts().await?;
+    let posts = Post::get_unarchived_posts(Post::default()).await?;
     let random_post_opt = posts.choose(&mut rand::thread_rng());
     println!("{:#?}", &random_post_opt);
     match random_post_opt {

@@ -3,7 +3,7 @@ use anyhow::Result;
 use chrono::prelude::Utc;
 use serde_derive::{Deserialize, Serialize};
 use serde_rusqlite::*;
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
 pub struct Post {
     pub original_url: String,
     pub real_url: Option<String>,

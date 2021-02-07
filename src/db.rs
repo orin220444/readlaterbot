@@ -16,7 +16,7 @@ impl db {
     {
         let conn = Self::connect()?;
         conn.execute_named(
-            &format!("INSERT INTO {} ({}) VALUES {}]", table, fields, values),
+            &format!("INSERT INTO {} ({}) VALUES ({})", table, fields, values),
             &to_params_named(data).unwrap().to_slice(),
         )?;
         Ok(())
