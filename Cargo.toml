@@ -20,7 +20,7 @@ serde = "*"
 chrono = "0.4"
 anyhow = "1.0"
 [dependencies.tokio]
-version =  "0.2.11"
+version =  "0.2"
 features = ["rt-threaded", "macros"]
 [dependencies.reqwest]
 version = "0.10.8"
