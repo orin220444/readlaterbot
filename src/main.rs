@@ -50,9 +50,9 @@ async fn handle_callback_query(cx: UpdateWithCx<CallbackQuery>) -> Result<()> {
         Some(data) => {
             // TODO: ref using enums
             if data == "del" {
-                crate::handlers::delete(cx).await;
+                crate::handlers::delete(cx).await?;
             } else if data == "archive" {
-                crate::handlers::archive(cx).await;
+                crate::handlers::archive(cx).await?;
             }
         }
     }
