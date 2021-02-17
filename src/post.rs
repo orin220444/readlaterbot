@@ -3,6 +3,7 @@ use anyhow::Result;
 use chrono::prelude::Utc;
 use serde_derive::{Deserialize, Serialize};
 use serde_rusqlite::*;
+use url::Url;
 #[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
 pub struct Post {
     pub original_url: String,
@@ -55,8 +56,11 @@ impl Post {
                     host + &path
                 };
                 println!("{}", real_url);
-
+if let Ok(_) = Url::parse(&real_url){ 
                 self.real_url = Some(real_url);
+} else {
+    self.real_url = Some(self.original_url.clone())
+}
                 self
             }
         }

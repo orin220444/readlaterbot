@@ -19,6 +19,7 @@ serde_derive = "*"
 serde = "*"
 chrono = "0.4"
 anyhow = "1.0"
+url = "2"
 [dependencies.tokio]
 version =  "0.2"
 features = ["rt-threaded", "macros"]
