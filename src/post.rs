@@ -53,16 +53,18 @@ impl Post {
                         }
                     }
                     let path = res.url().path().to_string();
-                    if let Some(query) = res.url().query(){host + &path + "?" +query} else {
-                   host + &path
+                    if let Some(query) = res.url().query() {
+                        host + &path + "?" + query
+                    } else {
+                        host + &path
                     }
                 };
                 println!("{}", real_url);
-if let Ok(_) = Url::parse(&real_url){ 
-                self.real_url = Some(real_url);
-} else {
-    self.real_url = Some(self.original_url.clone())
-}
+                if let Ok(_) = Url::parse(&real_url) {
+                    self.real_url = Some(real_url);
+                } else {
+                    self.real_url = Some(self.original_url.clone())
+                }
                 self
             }
         }
