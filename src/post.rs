@@ -53,7 +53,9 @@ impl Post {
                         }
                     }
                     let path = res.url().path().to_string();
-                    host + &path
+                    if let Some(query) = res.url().query(){host + &path + "?" +query} else {
+                   host + &path
+                    }
                 };
                 println!("{}", real_url);
 if let Ok(_) = Url::parse(&real_url){ 
