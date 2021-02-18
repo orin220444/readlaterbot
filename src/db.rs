@@ -43,7 +43,7 @@ impl db {
         let row = rows.map(|data| data.unwrap()).collect();
         Ok(row)
     }
-    pub fn delete(table: String, condition: String) -> Result<()> {
+    pub async fn delete(table: String, condition: String) -> Result<()> {
         let conn = Self::connect()?;
         conn.execute(
             &format!("DELETE FROM {} WHERE {}", table, condition),
@@ -51,7 +51,7 @@ impl db {
         )?;
         Ok(())
     }
-    pub fn update(table: String, set: String, condition: String) -> Result<()> {
+    pub async fn update(table: String, set: String, condition: String) -> Result<()> {
         let conn = Self::connect()?;
         conn.execute(
             &format!("UPDATE {} SET {} WHERE {}", table, set, condition),

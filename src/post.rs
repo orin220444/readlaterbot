@@ -76,13 +76,15 @@ impl Post {
         Ok(db::delete(
             "posts".to_string(),
             format!("original_url: {}", original_url),
-        )?)
+        )
+        .await?)
     }
     pub async fn archive_post(original_url: &str) -> Result<()> {
         Ok(db::update(
             "posts".to_string(),
             "read = 1".to_string(),
             format!("original_url: {}", original_url),
-        )?)
+        )
+        .await?)
     }
 }
