@@ -3,6 +3,7 @@ use anyhow::Result;
 use chrono::prelude::Utc;
 use serde_derive::{Deserialize, Serialize};
 use serde_rusqlite::*;
+use url::Url;
 #[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
 pub struct Post {
     pub original_url: String,
@@ -52,11 +53,18 @@ impl Post {
                         }
                     }
                     let path = res.url().path().to_string();
-                    host + &path
+                    if let Some(query) = res.url().query() {
+                        host + &path + "?" + query
+                    } else {
+                        host + &path
+                    }
                 };
                 println!("{}", real_url);
-
-                self.real_url = Some(real_url);
+                if let Ok(_) = Url::parse(&real_url) {
+                    self.real_url = Some(real_url);
+                } else {
+                    self.real_url = Some(self.original_url.clone())
+                }
                 self
             }
         }
@@ -75,7 +83,7 @@ impl Post {
     pub async fn delete_post(original_url: &str) -> Result<()> {
         Ok(db::delete(
             "posts".to_string(),
-            format!("original_url: {}", original_url),
+            format!("original_url = {}", original_url),
         )
         .await?)
     }
@@ -83,7 +91,7 @@ impl Post {
         Ok(db::update(
             "posts".to_string(),
             "read = 1".to_string(),
-            format!("original_url: {}", original_url),
+            format!("original_url = {}", original_url),
         )
         .await?)
     }

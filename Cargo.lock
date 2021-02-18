@@ -999,6 +999,7 @@ dependencies = [
  "teloxide",
  "teloxide-macros",
  "tokio",
+ "url",
 ]
 
 [[package]]
