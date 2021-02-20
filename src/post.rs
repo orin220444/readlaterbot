@@ -83,7 +83,7 @@ impl Post {
     pub async fn delete_post(original_url: &str) -> Result<()> {
         Ok(db::delete(
             "posts".to_string(),
-            format!("original_url = {}", original_url),
+            format!("original_url = \"{}\"", original_url),
         )
         .await?)
     }
@@ -91,7 +91,7 @@ impl Post {
         Ok(db::update(
             "posts".to_string(),
             "read = 1".to_string(),
-            format!("original_url = {}", original_url),
+            format!("original_url = \"{}\"", original_url),
         )
         .await?)
     }
