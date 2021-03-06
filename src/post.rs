@@ -95,4 +95,12 @@ impl Post {
         )
         .await?)
     }
+    pub async fn unarchive_post(original_url: &str) -> Result<()> {
+        Ok(db::update(
+            "posts".to_string(),
+            "read = 0".to_string(),
+            format!("original_url = \"{}\"", original_url),
+        )
+        .await?)
+    }
 }

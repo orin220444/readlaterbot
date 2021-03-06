@@ -53,6 +53,8 @@ async fn handle_callback_query(cx: UpdateWithCx<CallbackQuery>) -> Result<()> {
                 crate::handlers::delete(cx).await?;
             } else if data == "archive" {
                 crate::handlers::archive(cx).await?;
+            } else if data == "unarchive" {
+                crate::handlers::unarchive(cx).await?;
             }
         }
     }
