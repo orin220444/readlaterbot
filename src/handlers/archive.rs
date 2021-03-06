@@ -13,7 +13,7 @@ pub async fn archive(cx: UpdateWithCx<CallbackQuery>) -> Result<()> {
         ),
         InlineKeyboardButton::new(
             "Unarchive",
-            InlineKeyboardButtonKind::CallbackData("unrchived".into()),
+            InlineKeyboardButtonKind::CallbackData("unarchive".into()),
         ),
     ]]);
 
