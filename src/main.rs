@@ -49,11 +49,11 @@ async fn handle_callback_query(cx: UpdateWithCx<CallbackQuery>) -> Result<()> {
         None => {}
         Some(data) => {
             // TODO: ref using enums
-            if data == "del" {
+            if data.starts_with("del") {
                 crate::handlers::delete(cx).await?;
-            } else if data == "archive" {
+            } else if data.starts_with("archive") {
                 crate::handlers::archive(cx).await?;
-            } else if data == "unarchive" {
+            } else if data.starts_with("unarchive") {
                 crate::handlers::unarchive(cx).await?;
             }
         }
