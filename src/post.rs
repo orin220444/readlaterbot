@@ -59,7 +59,6 @@ impl Post {
                         host + &path
                     }
                 };
-                println!("{}", real_url);
                 if let Ok(_) = Url::parse(&real_url) {
                     self.real_url = Some(real_url);
                 } else {
