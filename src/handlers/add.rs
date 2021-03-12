@@ -1,6 +1,6 @@
 use crate::keyboards;
 use crate::link_finder;
-use crate::post::Post;
+use crate::post::{Post, PostBuilder};
 use anyhow::Result;
 use teloxide::{
     prelude::{Request, UpdateWithCx},
@@ -14,9 +14,15 @@ pub async fn add(cx: UpdateWithCx<Message>) -> Result<()> {
         Some(urls) => {
             println!("{:#?}", urls);
             for url in urls {
-                let mut post = Post::new(&url);
-                post.real_url().await;
-                match post.save_post().await {
+                let real_url = real_url(&url).await;
+                let created = created();
+                let mut post = PostBuilder::builder()
+                    .original_url(url.clone())
+                    .real_url(real_url)
+                    .created(created)
+                    .read(false)
+                    .build();
+                match post.save_to_db().await {
                     Ok(_) => {
                         log::info!("Successful saved post");
                         match cx
@@ -38,4 +44,40 @@ pub async fn add(cx: UpdateWithCx<Message>) -> Result<()> {
     }
 
     Ok(())
+}
+use url::Url;
+async fn real_url(original_url: &str) -> String {
+    match reqwest::get(original_url).await {
+        Err(e) => {
+            println!("{:#?}", e);
+            original_url.into()
+        }
+        Ok(res) => {
+            println!("{:#?}", &res);
+            let mut real_url = {
+                let mut host: String = String::new();
+                match res.url().host() {
+                    Some(host_path) => host = host_path.to_string(),
+                    None => {
+                        println!("No host!");
+                    }
+                }
+                let path = res.url().path().to_string();
+                if let Some(query) = res.url().query() {
+                    host + &path + "?" + query
+                } else {
+                    host + &path
+                }
+            };
+            println!("{}", real_url);
+            if let Err(_) = Url::parse(&real_url) {
+                real_url = original_url.into();
+            }
+            real_url
+        }
+    }
+}
+use chrono::prelude::Utc;
+fn created() -> String {
+    Utc::now().to_string()
 }

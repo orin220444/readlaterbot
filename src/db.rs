@@ -10,7 +10,7 @@ impl db {
         let conn = Connection::open(&path)?;
         Ok(conn)
     }
-    pub fn insert_one<T>(data: &T, table: String, fields: String, values: String) -> Result<()>
+    pub fn insert_one<T>(data: &T, table: String, fields: String, values: String) -> Result<i64>
     where
         T: Serialize,
     {
@@ -19,7 +19,7 @@ impl db {
             &format!("INSERT INTO {} ({}) VALUES ({})", table, fields, values),
             &to_params_named(data).unwrap().to_slice(),
         )?;
-        Ok(())
+        Ok(conn.last_insert_rowid())
     }
     pub fn get_all<T>(table: String, _: &T) -> Result<Vec<T>>
     where
