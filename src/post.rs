@@ -24,26 +24,22 @@ impl Post {
             "read = 0".to_string(),
         )?)
     }
-    pub async fn delete_post(original_url: &str) -> Result<()> {
-        Ok(db::delete(
-            "posts".to_string(),
-            format!("original_url = \"{}\"", original_url),
-        )
-        .await?)
+    pub async fn delete_post(id: &str) -> Result<()> {
+        Ok(db::delete("posts".to_string(), format!("id = \"{}\"", id)).await?)
     }
-    pub async fn archive_post(original_url: &str) -> Result<()> {
+    pub async fn archive_post(id: &str) -> Result<()> {
         Ok(db::update(
             "posts".to_string(),
             "read = 1".to_string(),
-            format!("original_url = \"{}\"", original_url),
+            format!("id = \"{}\"", id),
         )
         .await?)
     }
-    pub async fn unarchive_post(original_url: &str) -> Result<()> {
+    pub async fn unarchive_post(id: &str) -> Result<()> {
         Ok(db::update(
             "posts".to_string(),
             "read = 0".to_string(),
-            format!("original_url = \"{}\"", original_url),
+            format!("id = \"{}\"", id),
         )
         .await?)
     }

@@ -44,17 +44,17 @@ async fn handle_message(cx: UpdateWithCx<Message>) -> Result<()> {
     }
 }
 async fn handle_callback_query(cx: UpdateWithCx<CallbackQuery>) -> Result<()> {
-    let data = &cx.update.data;
+    let data = cx.update.data.clone();
     match data {
         None => {}
         Some(data) => {
             // TODO: ref using enums
             if data.starts_with("del") {
-                crate::handlers::delete(cx).await?;
+                crate::handlers::delete(cx, &data.strip_prefix("del").unwrap()).await?;
             } else if data.starts_with("archive") {
-                crate::handlers::archive(cx).await?;
+                crate::handlers::archive(cx, &data.strip_prefix("archive").unwrap()).await?;
             } else if data.starts_with("unarchive") {
-                crate::handlers::unarchive(cx).await?;
+                crate::handlers::unarchive(cx, &data.strip_prefix("unarchive").unwrap()).await?;
             }
         }
     }
