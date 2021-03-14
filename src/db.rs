@@ -10,7 +10,7 @@ impl db {
         let conn = Connection::open(&path)?;
         Ok(conn)
     }
-    pub fn insert_one<T>(data: &T, table: String, fields: String, values: String) -> Result<i64>
+    pub fn insert_one<T>(data: &T, table: &str, fields: &str, values: &str) -> Result<i64>
     where
         T: Serialize,
     {
@@ -21,7 +21,7 @@ impl db {
         )?;
         Ok(conn.last_insert_rowid())
     }
-    pub fn get_all<T>(table: String, _: &T) -> Result<Vec<T>>
+    pub fn get_all<T>(table: &str, _: &T) -> Result<Vec<T>>
     where
         T: DeserializeOwned,
     {
@@ -32,7 +32,7 @@ impl db {
 
         Ok(row)
     }
-    pub fn get_specific<T>(table: String, _: &T, condition: String) -> Result<Vec<T>>
+    pub fn get_specific<T>(table: &str, _: &T, condition: &str) -> Result<Vec<T>>
     where
         T: DeserializeOwned,
     {
@@ -43,7 +43,7 @@ impl db {
         let row = rows.map(|data| data.unwrap()).collect();
         Ok(row)
     }
-    pub async fn delete(table: String, condition: String) -> Result<()> {
+    pub async fn delete(table: &str, condition: &str) -> Result<()> {
         let conn = Self::connect()?;
         conn.execute(
             &format!("DELETE FROM {} WHERE {}", table, condition),
@@ -51,7 +51,7 @@ impl db {
         )?;
         Ok(())
     }
-    pub async fn update(table: String, set: String, condition: String) -> Result<()> {
+    pub async fn update(table: &str, set: &str, condition: &str) -> Result<()> {
         let conn = Self::connect()?;
         conn.execute(
             &format!("UPDATE {} SET {} WHERE {}", table, set, condition),
