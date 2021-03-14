@@ -1,3 +1,4 @@
+use crate::keyboards::unarchive_keyboard;
 use crate::Post;
 use anyhow::Result;
 use teloxide::types::{InlineKeyboardButton, InlineKeyboardButtonKind, InlineKeyboardMarkup};
@@ -6,16 +7,6 @@ use teloxide::{
     types::{CallbackQuery, ChatId, ChatOrInlineMessage, MediaKind, MessageKind},
 };
 pub async fn archive(cx: UpdateWithCx<CallbackQuery>, data: &str) -> Result<()> {
-    let unarchive_keyboard = InlineKeyboardMarkup::new(vec![vec![
-        InlineKeyboardButton::new(
-            "Delete",
-            InlineKeyboardButtonKind::CallbackData("del".into()),
-        ),
-        InlineKeyboardButton::new(
-            "Unarchive",
-            InlineKeyboardButtonKind::CallbackData("unarchive".into()),
-        ),
-    ]]);
     Post::archive_post(data).await?;
     let message_id = cx.update.message.clone().unwrap().id;
     let chat_id = cx.update.message.clone().unwrap().chat_id();
@@ -39,7 +30,7 @@ pub async fn archive(cx: UpdateWithCx<CallbackQuery>, data: &str) -> Result<()> 
             chat_id: ChatId::Id(chat_id),
             message_id: message_id,
         })
-        .reply_markup(unarchive_keyboard)
+        .reply_markup(unarchive_keyboard())
         .send()
         .await?;
     Ok(())
