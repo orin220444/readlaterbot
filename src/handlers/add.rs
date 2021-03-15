@@ -23,11 +23,11 @@ pub async fn add(cx: UpdateWithCx<Message>) -> Result<()> {
                     .read(false)
                     .build();
                 match post.save_to_db().await {
-                    Ok(_) => {
+                    Ok(id) => {
                         log::info!("Successful saved post");
                         match cx
                             .answer(url)
-                            .reply_markup(keyboards::standart_keyboard())
+                            .reply_markup(keyboards::standart_keyboard(&format!("{}", id)))
                             .send()
                             .await
                         {

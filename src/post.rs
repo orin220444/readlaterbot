@@ -18,34 +18,19 @@ impl Post {
     }
 
     pub async fn get_unarchived_posts(self) -> Result<Vec<Post>> {
-        Ok(db::get_specific(
-            "posts",
-            &self,
-            "read = 0",
-        )?)
+        Ok(db::get_specific("posts", &self, "read = 0")?)
     }
-    pub async fn delete_post(original_url: &str) -> Result<()> {
-        Ok(db::delete(
-            "posts",
-            &format!("original_url = \"{}\"", original_url),
-        )
-        .await?)
+    pub async fn delete_post(id: &str) -> Result<()> {
+        Ok(db::delete("posts", &format!("id = \"{}\"", id)).await?)
     }
-    pub async fn archive_post(original_url: &str) -> Result<()> {
-        Ok(db::update(
-            "posts",
-            "read = 1",
-            &format!("original_url = \"{}\"", original_url),
-        )
-        .await?)
+    pub async fn archive_post(id: &str) -> Result<()> {
+        Ok(db::update("posts", "read = 1", &format!("id = \"{}\"", id)).await?)
     }
-    pub async fn unarchive_post(original_url: &str) -> Result<()> {
-        Ok(db::update(
-            "posts",
-            "read = 0",
-            &format!("original_url = \"{}\"", original_url),
-        )
-        .await?)
+    pub async fn unarchive_post(id: &str) -> Result<()> {
+        Ok(db::update("posts", "read = 0", &format!("id = \"{}\"", id)).await?)
+    }
+    pub fn id(&self) -> i64 {
+        self.id
     }
 }
 #[derive(Serialize, Default, TypedBuilder)]
