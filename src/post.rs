@@ -43,6 +43,9 @@ impl Post {
         )
         .await?)
     }
+    pub fn id(&self) -> i64 {
+        self.id
+    }
 }
 #[derive(Serialize, Default, TypedBuilder)]
 pub struct PostBuilder {

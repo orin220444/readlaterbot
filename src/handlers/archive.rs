@@ -30,7 +30,7 @@ pub async fn archive(cx: UpdateWithCx<CallbackQuery>, data: &str) -> Result<()> 
             chat_id: ChatId::Id(chat_id),
             message_id: message_id,
         })
-        .reply_markup(unarchive_keyboard())
+        .reply_markup(unarchive_keyboard(data))
         .send()
         .await?;
     Ok(())
