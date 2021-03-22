@@ -1,11 +1,8 @@
 use crate::keyboards::standart_keyboard;
 use crate::Post;
 use anyhow::Result;
-use teloxide::types::{InlineKeyboardButton, InlineKeyboardButtonKind, InlineKeyboardMarkup};
-use teloxide::{
-    prelude::*,
-    types::{CallbackQuery, ChatId, MediaKind, MessageKind},
-};
+use teloxide::prelude::*;
+
 pub async fn unarchive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &str) -> Result<()> {
     Post::unarchive_post(data).await?;
     let inline_message_id = cx.update.inline_message_id.clone().unwrap();
