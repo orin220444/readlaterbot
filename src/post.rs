@@ -14,34 +14,20 @@ pub struct Post {
 
 impl Post {
     pub async fn get_all_posts(self) -> Result<Vec<Post>> {
-        Ok(db::get_all("posts".to_string(), &self)?)
+        Ok(db::get_all("posts", &self)?)
     }
 
     pub async fn get_unarchived_posts(self) -> Result<Vec<Post>> {
-        Ok(db::get_specific(
-            "posts".to_string(),
-            &self,
-            "read = 0".to_string(),
-        )?)
+        Ok(db::get_specific("posts", &self, "read = 0")?)
     }
     pub async fn delete_post(id: &str) -> Result<()> {
-        Ok(db::delete("posts".to_string(), format!("id = \"{}\"", id)).await?)
+        Ok(db::delete("posts", &format!("id = \"{}\"", id)).await?)
     }
     pub async fn archive_post(id: &str) -> Result<()> {
-        Ok(db::update(
-            "posts".to_string(),
-            "read = 1".to_string(),
-            format!("id = \"{}\"", id),
-        )
-        .await?)
+        Ok(db::update("posts", "read = 1", &format!("id = \"{}\"", id)).await?)
     }
     pub async fn unarchive_post(id: &str) -> Result<()> {
-        Ok(db::update(
-            "posts".to_string(),
-            "read = 0".to_string(),
-            format!("id = \"{}\"", id),
-        )
-        .await?)
+        Ok(db::update("posts", "read = 0", &format!("id = \"{}\"", id)).await?)
     }
     pub fn id(&self) -> i64 {
         self.id
@@ -58,9 +44,9 @@ impl PostBuilder {
     pub async fn save_to_db(&self) -> Result<i64> {
         Ok(db::insert_one(
             &self,
-            "posts".to_string(),
-            "original_url, real_url, read, created".to_string(),
-            ":original_url, :real_url, :read, :created".to_string(),
+            "posts",
+            "original_url, real_url, read, created",
+            ":original_url, :real_url, :read, :created",
         )?)
     }
 }
