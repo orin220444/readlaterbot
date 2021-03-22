@@ -1,6 +1,4 @@
-use teloxide::types::{
-    InlineKeyboardButton, InlineKeyboardButtonKind, InlineKeyboardMarkup,
-};
+use teloxide::types::{InlineKeyboardButton, InlineKeyboardButtonKind, InlineKeyboardMarkup};
 pub fn standart_keyboard(id: &str) -> InlineKeyboardMarkup {
     InlineKeyboardMarkup::default().append_row(vec![
         InlineKeyboardButton::new(

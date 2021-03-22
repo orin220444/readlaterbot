@@ -3,7 +3,7 @@ use crate::Post;
 use anyhow::Result;
 use teloxide::prelude::*;
 
-pub async fn archive(cx: UpdateWithCx<AutoSend<Bot>,CallbackQuery>, data: &str) -> Result<()> {
+pub async fn archive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &str) -> Result<()> {
     Post::archive_post(data).await?;
     let inline_message_id = cx.update.inline_message_id.clone().unwrap();
     cx.requester

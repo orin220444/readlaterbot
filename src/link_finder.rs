@@ -1,7 +1,7 @@
 use teloxide::prelude::*;
 use teloxide::types::{MediaKind, Message, MessageEntityKind, MessageKind};
 
-pub fn link_finder(message: &UpdateWithCx<AutoSend<Bot>,Message>) -> Option<Vec<String>> {
+pub fn link_finder(message: &UpdateWithCx<AutoSend<Bot>, Message>) -> Option<Vec<String>> {
     let message_kind = &message.update.kind;
     match message_kind {
         MessageKind::Common(message_common) => match &message_common.media_kind {

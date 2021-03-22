@@ -1,9 +1,6 @@
 use anyhow::Result;
 use dotenv::dotenv;
-use teloxide::{
-    prelude::*,
-    utils::command::BotCommand,
-};
+use teloxide::{prelude::*, utils::command::BotCommand};
 use tokio_stream::wrappers::UnboundedReceiverStream;
 mod db;
 mod handlers;
@@ -68,8 +65,7 @@ async fn run_bot() {
 
     Dispatcher::new(bot)
         .messages_handler(|rx: DispatcherHandlerRx<AutoSend<Bot>, Message>| {
-            UnboundedReceiverStream::new(rx)
-            .for_each_concurrent(None, |cx| async move {
+            UnboundedReceiverStream::new(rx).for_each_concurrent(None, |cx| async move {
                 match handle_message(cx).await {
                     Ok(_) => {}
                     Err(e) => println!("Error while handling messages: {:#?}", e),
@@ -77,8 +73,7 @@ async fn run_bot() {
             })
         })
         .callback_queries_handler(|rx: DispatcherHandlerRx<AutoSend<Bot>, CallbackQuery>| {
-            UnboundedReceiverStream::new(rx)
-            .for_each_concurrent(None, |cx| async move {
+            UnboundedReceiverStream::new(rx).for_each_concurrent(None, |cx| async move {
                 println!("New Callback query: {:#?}", &cx.update);
                 match handle_callback_query(cx).await {
                     Ok(_) => {}

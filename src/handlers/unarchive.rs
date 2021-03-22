@@ -21,10 +21,7 @@ pub async fn unarchive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &st
         .send()
         .await?;
     cx.requester
-        .edit_message_text_inline(
-inline_message_id.clone(),
-            text,
-        )
+        .edit_message_text_inline(inline_message_id.clone(), text)
         .send()
         .await?;
     cx.requester
