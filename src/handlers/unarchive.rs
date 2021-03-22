@@ -5,7 +5,8 @@ use teloxide::prelude::*;
 
 pub async fn unarchive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &str) -> Result<()> {
     Post::unarchive_post(data).await?;
-    let inline_message_id = cx.update.inline_message_id.clone().unwrap();
+    let message_id = cx.update.message.clone().unwrap().id;
+    let chat_id = cx.update.message.clone().unwrap().chat_id();
     let text = clear_label(
         cx.update
             .message
@@ -21,11 +22,11 @@ pub async fn unarchive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &st
         .send()
         .await?;
     cx.requester
-        .edit_message_text_inline(inline_message_id.clone(), text)
+        .edit_message_text(chat_id, message_id, text)
         .send()
         .await?;
     cx.requester
-        .edit_message_reply_markup_inline(inline_message_id.clone())
+        .edit_message_reply_markup(chat_id, message_id)
         .reply_markup(standart_keyboard(data))
         .send()
         .await?;
