@@ -3,7 +3,7 @@ use crate::Post;
 use anyhow::Result;
 use rand::seq::SliceRandom;
 use teloxide::prelude::*;
-pub async fn random(cx: UpdateWithCx<Message>) -> Result<()> {
+pub async fn random(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
     let posts = Post::get_unarchived_posts(Post::default()).await?;
     let random_post_opt = posts.choose(&mut rand::thread_rng());
     println!("{:#?}", &random_post_opt);

@@ -3,10 +3,10 @@ use crate::link_finder;
 use crate::post::{Post, PostBuilder};
 use anyhow::Result;
 use teloxide::{
-    prelude::{Request, UpdateWithCx},
+    prelude::*,
     types::Message,
 };
-pub async fn add(cx: UpdateWithCx<Message>) -> Result<()> {
+pub async fn add(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
     println!("{:#?}", &cx.update.kind);
     let urls = link_finder::link_finder(&cx);
     match urls {

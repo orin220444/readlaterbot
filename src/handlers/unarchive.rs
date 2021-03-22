@@ -3,13 +3,12 @@ use crate::Post;
 use anyhow::Result;
 use teloxide::types::{InlineKeyboardButton, InlineKeyboardButtonKind, InlineKeyboardMarkup};
 use teloxide::{
-    prelude::{Request, UpdateWithCx},
-    types::{CallbackQuery, ChatId, ChatOrInlineMessage, MediaKind, MessageKind},
+    prelude::*,
+    types::{CallbackQuery, ChatId, MediaKind, MessageKind},
 };
-pub async fn unarchive(cx: UpdateWithCx<CallbackQuery>, data: &str) -> Result<()> {
+pub async fn unarchive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &str) -> Result<()> {
     Post::unarchive_post(data).await?;
-    let message_id = cx.update.message.clone().unwrap().id;
-    let chat_id = cx.update.message.clone().unwrap().chat_id();
+    let inline_message_id = cx.update.inline_message_id.clone().unwrap();
     let text = clear_label(
         cx.update
             .message
@@ -19,26 +18,20 @@ pub async fn unarchive(cx: UpdateWithCx<CallbackQuery>, data: &str) -> Result<()
             .unwrap()
             .to_string(),
     );
-    cx.bot
+    cx.requester
         .answer_callback_query(cx.update.id)
         .text("Unarchived!")
         .send()
         .await?;
-    cx.bot
-        .edit_message_text(
-            ChatOrInlineMessage::Chat {
-                chat_id: ChatId::Id(chat_id),
-                message_id: message_id,
-            },
+    cx.requester
+        .edit_message_text_inline(
+inline_message_id.clone(),
             text,
         )
         .send()
         .await?;
-    cx.bot
-        .edit_message_reply_markup(ChatOrInlineMessage::Chat {
-            chat_id: ChatId::Id(chat_id),
-            message_id: message_id,
-        })
+    cx.requester
+        .edit_message_reply_markup_inline(inline_message_id.clone())
         .reply_markup(standart_keyboard(data))
         .send()
         .await?;
