@@ -1,15 +1,25 @@
-use teloxide::types::{
-    InlineKeyboardButton, InlineKeyboardButtonKind, InlineKeyboardMarkup, ReplyMarkup,
-};
-pub fn standart_keyboard() -> ReplyMarkup {
-    ReplyMarkup::InlineKeyboardMarkup(InlineKeyboardMarkup::new(vec![vec![
+use teloxide::types::{InlineKeyboardButton, InlineKeyboardButtonKind, InlineKeyboardMarkup};
+pub fn standart_keyboard(id: &str) -> InlineKeyboardMarkup {
+    InlineKeyboardMarkup::default().append_row(vec![
         InlineKeyboardButton::new(
             "Delete",
-            InlineKeyboardButtonKind::CallbackData("del".into()),
+            InlineKeyboardButtonKind::CallbackData(format!("del {}", id).into()),
         ),
         InlineKeyboardButton::new(
             "Archive",
-            InlineKeyboardButtonKind::CallbackData("archive".into()),
+            InlineKeyboardButtonKind::CallbackData(format!("archive {}", id).into()),
         ),
-    ]]))
+    ])
+}
+pub fn unarchive_keyboard(id: &str) -> InlineKeyboardMarkup {
+    InlineKeyboardMarkup::default().append_row(vec![
+        InlineKeyboardButton::new(
+            "Delete",
+            InlineKeyboardButtonKind::CallbackData(format!("del {}", id).into()),
+        ),
+        InlineKeyboardButton::new(
+            "Unarchive",
+            InlineKeyboardButtonKind::CallbackData(format!("unarchive {}", id).into()),
+        ),
+    ])
 }

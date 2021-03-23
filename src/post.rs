@@ -5,58 +5,20 @@ use futures::stream::StreamExt;
 use mongodb::bson::Document;
 use mongodb::bson::{de::from_document, doc, ser::to_document};
 use serde_derive::{Deserialize, Serialize};
+use typed_builder::TypedBuilder;
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Post {
+    id: i64,
     pub original_url: String,
-    pub real_url: Option<String>,
+    pub real_url: String,
     pub read: bool,
     pub created: String,
 }
 
 impl Post {
-    pub fn new(original_url: &str) -> Post {
-        Post {
-            original_url: original_url.to_string(),
-            real_url: None,
-            read: false,
-            created: Utc::now().to_string(),
-        }
-    }
-
-    pub async fn save_post(self) -> Result<()> {
-        self.save_to_db().await?;
-        Ok(())
-    }
-
     async fn save_to_db(&self) -> Result<()> {
         let bson_post = to_document(&self)?;
         Ok(Db::insert_one("posts".to_string(), bson_post, None).await?)
-    }
-    pub async fn real_url(&mut self) -> &Post {
-        match reqwest::get(&self.original_url.to_string()).await {
-            Err(e) => {
-                println!("{:#?}", e);
-                self
-            }
-            Ok(res) => {
-                println!("{:#?}", &res);
-                let real_url = {
-                    let mut host: String = String::new();
-                    match res.url().host() {
-                        Some(host_path) => host = host_path.to_string(),
-                        None => {
-                            println!("No host!");
-                        }
-                    }
-                    let path = res.url().path().to_string();
-                    host + &path
-                };
-                println!("{}", real_url);
-
-                self.real_url = Some(real_url);
-                self
-            }
-        }
     }
     pub async fn get_all_posts(self) -> Result<Vec<Post>> {
         let filter = doc! {};
