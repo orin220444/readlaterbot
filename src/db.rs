@@ -5,6 +5,7 @@ use mongodb::{
         ClientOptions, FindOneAndDeleteOptions, FindOneAndUpdateOptions, FindOneOptions,
         FindOptions, InsertOneOptions, UpdateModifications,
     },
+    results::InsertOneResult,
     Client, Cursor, Database,
 };
 use serde::{de::DeserializeOwned, ser::Serialize};
@@ -20,11 +21,12 @@ impl Db {
         collection: String,
         doc: Document,
         options: impl Into<Option<InsertOneOptions>>,
-    ) -> Result<()> {
+    ) -> Result<InsertOneResult> {
         let db = Self::connect().await?;
         let coll = db.collection(&collection);
-        coll.insert_one(doc, options).await?;
-        Ok(())
+        println!("{:#?}", coll);
+        let res = coll.insert_one(doc, options).await?;
+        Ok(res)
     }
     pub async fn delete_one(
         collection: String,

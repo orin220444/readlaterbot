@@ -8,7 +8,7 @@ use serde_derive::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Post {
-    id: i64,
+    id: String,
     pub original_url: String,
     pub real_url: String,
     pub read: bool,
@@ -16,10 +16,6 @@ pub struct Post {
 }
 
 impl Post {
-    async fn save_to_db(&self) -> Result<()> {
-        let bson_post = to_document(&self)?;
-        Ok(Db::insert_one("posts".to_string(), bson_post, None).await?)
-    }
     pub async fn get_all_posts(self) -> Result<Vec<Post>> {
         let filter = doc! {};
         let mut bson_data = Db::find("posts".to_string(), filter, None).await?;
@@ -45,21 +41,51 @@ impl Post {
         }
         Ok(posts)
     }
-    pub async fn delete_post(original_url: &str) -> Result<()> {
+    pub async fn delete_post(id: &str) -> Result<()> {
         let filter = doc! {
-            "original_url" : original_url,
+            "_id" : id,
         };
         let _ = Db::delete_one("posts".to_string(), filter, None).await?;
         Ok(())
     }
-    pub async fn archive_post(original_url: &str) -> Result<()> {
+    pub async fn archive_post(id: &str) -> Result<()> {
         let filter = doc! {
-            "original_url": original_url,
+            "_id": id,
         };
         let update = doc! {
             "read": "true"
         };
         let _ = Db::update("posts".to_string(), filter, update, None).await?;
         Ok(())
+    }
+    pub async fn unarchive_post(id: &str) -> Result<()> {
+        let filter = doc! {
+            "_id": id,
+        };
+        let update = doc! {
+            "read": "false"
+        };
+        let _ = Db::update("posts".to_string(), filter, update, None).await?;
+        Ok(())
+    }
+    pub fn id(&self) -> String {
+        self.id.clone()
+    }
+}
+#[derive(TypedBuilder, Serialize)]
+pub struct PostBuilder {
+    pub original_url: String,
+    pub real_url: String,
+    pub read: bool,
+    pub created: String,
+}
+impl PostBuilder {
+    pub async fn save_to_db(&self) -> Result<String> {
+        let bson_post = to_document(&self)?;
+        println!("{:#?}", bson_post);
+        let bson_res = Db::insert_one("posts".to_string(), bson_post, None).await?;
+        println!("{:#?}", bson_res);
+        let id_str = bson_res.inserted_id.as_object_id().unwrap().to_string();
+        Ok(id_str)
     }
 }
