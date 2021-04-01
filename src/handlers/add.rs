@@ -25,7 +25,6 @@ pub async fn add(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
                 match cx
                     .answer(url)
                     .reply_markup(keyboards::standart_keyboard(&format!("{}", id)))
-                    .send()
                     .await
                 {
                     Ok(_) => {}
