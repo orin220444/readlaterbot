@@ -1,7 +1,7 @@
 use crate::db::db;
 use anyhow::Result;
 use serde_derive::{Deserialize, Serialize};
-use serde_rusqlite::*;
+
 use typed_builder::TypedBuilder;
 #[derive(Serialize, Deserialize, Debug, PartialEq, Default)]
 pub struct Post {

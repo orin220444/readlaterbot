@@ -27,7 +27,7 @@ impl db {
     {
         let conn = Self::connect()?;
         let mut statement = conn.prepare(&format!("SELECT * FROM {}", table))?;
-        let mut rows = from_rows::<T>(statement.query(NO_PARAMS).unwrap());
+        let rows = from_rows::<T>(statement.query(NO_PARAMS).unwrap());
         let row = rows.map(|data| data.unwrap()).collect(); //                        .collect::<Vec<T>>?;
 
         Ok(row)
@@ -39,7 +39,7 @@ impl db {
         let conn = Self::connect()?;
         let mut statement =
             conn.prepare(&format!("SELECT * FROM {} WHERE {}", table, condition))?;
-        let mut rows = from_rows::<T>(statement.query(NO_PARAMS).unwrap());
+        let rows = from_rows::<T>(statement.query(NO_PARAMS).unwrap());
         let row = rows.map(|data| data.unwrap()).collect();
         Ok(row)
     }

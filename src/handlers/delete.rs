@@ -1,9 +1,6 @@
 use crate::Post;
 use anyhow::Result;
-use teloxide::{
-    prelude::*,
-    types::{MediaKind, MessageKind},
-};
+use teloxide::prelude::*;
 pub async fn delete(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &str) -> Result<()> {
     Post::delete_post(data).await?;
     cx.requester

@@ -1,6 +1,6 @@
 use crate::keyboards;
 use crate::link_finder;
-use crate::post::{Post, PostBuilder};
+use crate::post::PostBuilder;
 use anyhow::Result;
 use teloxide::prelude::*;
 pub async fn add(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
@@ -13,7 +13,7 @@ pub async fn add(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
     for url in urls {
         let real_url = real_url(&url).await;
         let created = created();
-        let mut post = PostBuilder::builder()
+        let post = PostBuilder::builder()
             .original_url(url.clone())
             .real_url(real_url)
             .created(created)
