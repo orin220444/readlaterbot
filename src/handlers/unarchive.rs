@@ -19,16 +19,13 @@ pub async fn unarchive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &st
     cx.requester
         .answer_callback_query(cx.update.id)
         .text("Unarchived!")
-        .send()
         .await?;
     cx.requester
         .edit_message_text(chat_id, message_id, text)
-        .send()
         .await?;
     cx.requester
         .edit_message_reply_markup(chat_id, message_id)
         .reply_markup(standart_keyboard(data))
-        .send()
         .await?;
     Ok(())
 }

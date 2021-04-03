@@ -27,10 +27,10 @@ async fn command_answer(cx: UpdateWithCx<AutoSend<Bot>, Message>, command: Comma
     }
 }
 async fn handle_message(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
-    match cx.update.text() {
+    match parse_text(&cx) {
         None => Ok(()),
         Some(text) => {
-            if let Ok(command) = Command::parse(text, "test_name_bot") {
+            if let Ok(command) = Command::parse(&text, "test_name_bot") {
                 command_answer(cx, command).await?;
                 Ok(())
             } else {
@@ -39,6 +39,16 @@ async fn handle_message(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> 
             }
         }
     }
+}
+fn parse_text(cx: &UpdateWithCx<AutoSend<Bot>, Message>) -> Option<String> {
+    let mut res = None;
+    if let Some(text) = cx.update.text() {
+        res = Some(text.to_string());
+    }
+    if let Some(text) = cx.update.caption() {
+        res = Some(text.to_string());
+    }
+    res
 }
 async fn handle_callback_query(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>) -> Result<()> {
     let data = cx.update.data.clone();

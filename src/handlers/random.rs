@@ -18,7 +18,6 @@ pub async fn random(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
                     "{}",
                     random_post.id()
                 )))
-                .send()
                 .await?;
             Ok(())
         }

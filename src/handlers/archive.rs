@@ -10,7 +10,6 @@ pub async fn archive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &str)
     cx.requester
         .answer_callback_query(cx.update.id)
         .text("Archived!")
-        .send()
         .await?;
     cx.requester
         .edit_message_text(
@@ -18,12 +17,10 @@ pub async fn archive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &str)
             message_id,
             format!("{} [Archived]", cx.update.message.unwrap().text().unwrap()),
         )
-        .send()
         .await?;
     cx.requester
         .edit_message_reply_markup(chat_id, message_id)
         .reply_markup(unarchive_keyboard(data))
-        .send()
         .await?;
     Ok(())
 }
