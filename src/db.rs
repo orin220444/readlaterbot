@@ -18,23 +18,23 @@ impl Db {
         Ok(db)
     }
     pub async fn insert_one(
-        collection: String,
+        collection: &str,
         doc: Document,
         options: impl Into<Option<InsertOneOptions>>,
     ) -> Result<InsertOneResult> {
         let db = Self::connect().await?;
-        let coll = db.collection(&collection);
+        let coll = db.collection(collection);
         println!("{:#?}", coll);
         let res = coll.insert_one(doc, options).await?;
         Ok(res)
     }
     pub async fn delete_one(
-        collection: String,
+        collection: &str,
         filter: Document,
         options: impl Into<Option<FindOneAndDeleteOptions>>,
     ) -> Result<Option<Document>> {
         let db = Self::connect().await?;
-        let coll = db.collection(&collection);
+        let coll = db.collection(collection);
         Ok(coll.find_one_and_delete(filter, options).await?)
     }
     pub async fn find_one(
@@ -47,22 +47,22 @@ impl Db {
         Ok(coll.find_one(filter, options).await?)
     }
     pub async fn update(
-        collection: String,
+        collection: &str,
         filter: Document,
         update: impl Into<UpdateModifications>,
         options: impl Into<Option<FindOneAndUpdateOptions>>,
     ) -> Result<Option<Document>> {
         let db = Self::connect().await?;
-        let coll = db.collection(&collection);
+        let coll = db.collection(collection);
         Ok(coll.find_one_and_update(filter, update, options).await?)
     }
     pub async fn find(
-        collection: String,
+        collection: &str,
         filter: Document,
         options: impl Into<Option<FindOptions>>,
     ) -> Result<Cursor> {
         let db = Self::connect().await?;
-        let coll = db.collection(&collection);
+        let coll = db.collection(collection);
         Ok(coll.find(filter, options).await?)
     }
 }

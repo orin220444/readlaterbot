@@ -18,7 +18,7 @@ pub struct Post {
 impl Post {
     pub async fn get_all_posts(self) -> Result<Vec<Post>> {
         let filter = doc! {};
-        let mut bson_data = Db::find("posts".to_string(), filter, None).await?;
+        let mut bson_data = Db::find("posts", filter, None).await?;
         let mut posts = Vec::new();
         for doc in bson_data.next().await {
             if doc.is_ok() == true {
@@ -32,7 +32,7 @@ impl Post {
         let filter = doc! {
             "read": false
         };
-        let mut bson_data = Db::find("posts".to_string(), filter, None).await?;
+        let mut bson_data = Db::find("posts", filter, None).await?;
         let mut posts = Vec::new();
         for doc in bson_data.next().await {
             if doc.is_ok() == true {
@@ -45,7 +45,7 @@ impl Post {
         let filter = doc! {
             "_id" : id,
         };
-        let _ = Db::delete_one("posts".to_string(), filter, None).await?;
+        let _ = Db::delete_one("posts", filter, None).await?;
         Ok(())
     }
     pub async fn archive_post(id: &str) -> Result<()> {
@@ -55,7 +55,7 @@ impl Post {
         let update = doc! {
             "read": "true"
         };
-        let _ = Db::update("posts".to_string(), filter, update, None).await?;
+        let _ = Db::update("posts", filter, update, None).await?;
         Ok(())
     }
     pub async fn unarchive_post(id: &str) -> Result<()> {
@@ -65,7 +65,7 @@ impl Post {
         let update = doc! {
             "read": "false"
         };
-        let _ = Db::update("posts".to_string(), filter, update, None).await?;
+        let _ = Db::update("posts", filter, update, None).await?;
         Ok(())
     }
     pub fn id(&self) -> String {
@@ -83,7 +83,7 @@ impl PostBuilder {
     pub async fn save_to_db(&self) -> Result<String> {
         let bson_post = to_document(&self)?;
         println!("{:#?}", bson_post);
-        let bson_res = Db::insert_one("posts".to_string(), bson_post, None).await?;
+        let bson_res = Db::insert_one("posts", bson_post, None).await?;
         println!("{:#?}", bson_res);
         let id_str = bson_res.inserted_id.as_object_id().unwrap().to_string();
         Ok(id_str)
