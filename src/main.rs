@@ -1,6 +1,6 @@
 use anyhow::Result;
 use dotenv::dotenv;
-use teloxide::{prelude::*, utils::command::BotCommand};
+use teloxide::prelude::*;
 use tokio_stream::wrappers::UnboundedReceiverStream;
 mod db;
 mod handlers;
@@ -13,6 +13,9 @@ async fn main() {
     dotenv().ok();
     run_bot().await;
 }
+mod messages_dispatcher{
+use teloxide::{prelude::*, utils::command::BotCommand};
+use anyhow::Result;
 #[derive(BotCommand, Debug)]
 #[command(rename = "lowercase")]
 enum Command {
@@ -26,7 +29,7 @@ async fn command_answer(cx: UpdateWithCx<AutoSend<Bot>, Message>, command: Comma
         }
     }
 }
-async fn handle_message(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
+pub async fn handle_message(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
     match parse_text(&cx) {
         None => Ok(()),
         Some(text) => {
@@ -34,7 +37,7 @@ async fn handle_message(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> 
                 command_answer(cx, command).await?;
                 Ok(())
             } else {
-                handlers::add(cx).await?;
+                crate::handlers::add(cx).await?;
                 Ok(())
             }
         }
@@ -49,6 +52,7 @@ fn parse_text(cx: &UpdateWithCx<AutoSend<Bot>, Message>) -> Option<String> {
         res = Some(text.to_string());
     }
     res
+}
 }
 async fn handle_callback_query(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>) -> Result<()> {
     let data = cx.update.data.clone();
@@ -69,14 +73,14 @@ async fn handle_callback_query(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>) -
 }
 async fn run_bot() {
     teloxide::enable_logging!();
-    log::info!("Starting dices_bot...");
+    log::info!("Starting readlaterbot...");
 
     let bot = teloxide::Bot::new(std::env::var("TELEGRAM_BOT_TOKEN").unwrap()).auto_send();
 
     Dispatcher::new(bot)
         .messages_handler(|rx: DispatcherHandlerRx<AutoSend<Bot>, Message>| {
             UnboundedReceiverStream::new(rx).for_each_concurrent(None, |cx| async move {
-                match handle_message(cx).await {
+                match messages_dispatcher::handle_message(cx).await {
                     Ok(_) => {}
                     Err(e) => println!("Error while handling messages: {:#?}", e),
                 };
