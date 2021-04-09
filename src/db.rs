@@ -28,8 +28,7 @@ impl db {
         let conn = Self::connect()?;
         let mut statement = conn.prepare(&format!("SELECT * FROM {}", table))?;
         let rows = from_rows::<T>(statement.query(NO_PARAMS).unwrap());
-        let row = rows.map(|data| data.unwrap()).collect(); //                        .collect::<Vec<T>>?;
-
+        let row = rows.map(|data| data.unwrap()).collect();
         Ok(row)
     }
     pub fn get_specific<T>(table: &str, _: &T, condition: &str) -> Result<Vec<T>>
