@@ -13,46 +13,50 @@ async fn main() {
     dotenv().ok();
     run_bot().await;
 }
-mod messages_dispatcher{
-use teloxide::{prelude::*, utils::command::BotCommand};
-use anyhow::Result;
-#[derive(BotCommand, Debug)]
-#[command(rename = "lowercase")]
-enum Command {
-    Random,
-}
-async fn command_answer(cx: UpdateWithCx<AutoSend<Bot>, Message>, command: Command) -> Result<()> {
-    match command {
-        Command::Random => {
-            crate::handlers::random(cx).await?;
-            Ok(())
-        }
+mod messages_dispatcher {
+    use crate::handlers;
+    use anyhow::Result;
+    use teloxide::{prelude::*, utils::command::BotCommand};
+    #[derive(BotCommand, Debug)]
+    #[command(rename = "lowercase")]
+    enum Command {
+        Random,
     }
-}
-pub async fn handle_message(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
-    match parse_text(&cx) {
-        None => Ok(()),
-        Some(text) => {
-            if let Ok(command) = Command::parse(&text, "test_name_bot") {
-                command_answer(cx, command).await?;
-                Ok(())
-            } else {
-                crate::handlers::add(cx).await?;
+    async fn command_answer(
+        cx: UpdateWithCx<AutoSend<Bot>, Message>,
+        command: Command,
+    ) -> Result<()> {
+        match command {
+            Command::Random => {
+                handlers::random(cx).await?;
                 Ok(())
             }
         }
     }
-}
-fn parse_text(cx: &UpdateWithCx<AutoSend<Bot>, Message>) -> Option<String> {
-    let mut res = None;
-    if let Some(text) = cx.update.text() {
-        res = Some(text.to_string());
+    pub async fn handle_message(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
+        match parse_text(&cx) {
+            None => Ok(()),
+            Some(text) => {
+                if let Ok(command) = Command::parse(&text, "readlaterbot") {
+                    command_answer(cx, command).await?;
+                    Ok(())
+                } else {
+                    handlers::add(cx).await?;
+                    Ok(())
+                }
+            }
+        }
     }
-    if let Some(text) = cx.update.caption() {
-        res = Some(text.to_string());
+    fn parse_text(cx: &UpdateWithCx<AutoSend<Bot>, Message>) -> Option<String> {
+        let mut res = None;
+        if let Some(text) = cx.update.text() {
+            res = Some(text.to_string());
+        }
+        if let Some(text) = cx.update.caption() {
+            res = Some(text.to_string());
+        }
+        res
     }
-    res
-}
 }
 async fn handle_callback_query(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>) -> Result<()> {
     let data = cx.update.data.clone();
