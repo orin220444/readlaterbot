@@ -6,7 +6,7 @@ use serde_rusqlite::*;
 pub struct db;
 impl db {
     fn connect() -> Result<Connection> {
-        let path = "./readlaterdb.db3";
+        let path = std::env::var("DB_URL").expect("Set an DB_URL variable!");
         let conn = Connection::open(&path)?;
         Ok(conn)
     }
