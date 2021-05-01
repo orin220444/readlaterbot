@@ -30,6 +30,3 @@ lto = true
 cargo-husky = { version = "1", default-features = false, features = [
 	"user-hooks"
 ] }
-[target.'cfg(target_arch = "arm64")'.dependencies]
-openssl = {version = "*", features = ["vendored"]}
-rusqlite = {version = "*", features = ["bundled"]}
