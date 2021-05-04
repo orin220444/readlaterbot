@@ -24,7 +24,7 @@ pub async fn add(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
                 log::info!("Successful saved post");
                 match cx
                     .answer(url)
-                    .reply_markup(keyboards::standart_keyboard(&format!("{}", id)))
+                    .reply_markup(keyboards::standart_keyboard(id))
                     .await
                 {
                     Ok(_) => {}

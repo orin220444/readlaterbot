@@ -23,10 +23,11 @@ typed-builder = "0.9.0"
 teloxide = {version = "0.4", features = ["macros", "auto-send"] }
 tokio = {version =  "1.4",features = ["rt-multi-thread", "macros"] }
 reqwest = "0.11"
+
+[profile.release]
+lto = true
 [dev-dependencies]
 cargo-husky = { version = "1", default-features = false, features = [
 	"user-hooks"
 ] }
-[target.'cfg(target_arch = "arm64")'.dependencies]
-openssl = {version = "*", features = ["vendored"]}
-##rusqlite = {version = "*", features = ["bundled"]}
+
