@@ -25,7 +25,7 @@ pub async fn unarchive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &st
         .await?;
     cx.requester
         .edit_message_reply_markup(chat_id, message_id)
-        .reply_markup(standart_keyboard(data))
+        .reply_markup(standart_keyboard(data.parse::<i64>().unwrap()))
         .await?;
     Ok(())
 }

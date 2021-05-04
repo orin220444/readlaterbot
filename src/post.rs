@@ -21,13 +21,13 @@ impl Post {
         Ok(db::get_specific("posts", &self, "read = 0")?)
     }
     pub async fn delete_post(id: &str) -> Result<()> {
-        Ok(db::delete("posts", &format!(r#"id = "{}""#, id)).await?)
+        Ok(db::delete("posts", &format!(r#"id = {}"#, id)).await?)
     }
     pub async fn archive_post(id: &str) -> Result<()> {
-        Ok(db::update("posts", "read = 1", &format!(r#"id = "{}""#, id)).await?)
+        Ok(db::update("posts", "read = 1", &format!(r#"id = {}"#, id)).await?)
     }
     pub async fn unarchive_post(id: &str) -> Result<()> {
-        Ok(db::update("posts", "read = 0", &format!(r#"id = "{}""#, id)).await?)
+        Ok(db::update("posts", "read = 0", &format!(r#"id = {}"#, id)).await?)
     }
     pub fn id(&self) -> i64 {
         self.id
