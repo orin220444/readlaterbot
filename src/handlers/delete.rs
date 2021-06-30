@@ -1,4 +1,4 @@
-use crate::{Post, db::connect_to_db};
+use crate::{db::connect_to_db};
 use anyhow::Result;
 use teloxide::prelude::*;
 pub async fn delete(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &str) -> Result<()> {

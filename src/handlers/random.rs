@@ -1,7 +1,7 @@
 use crate::keyboards;
 use crate::Post;
 use anyhow::Result;
-use rand::seq::SliceRandom;
+
 use teloxide::prelude::*;
 pub async fn random(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
     let post = get_random_post().await?;
@@ -12,10 +12,10 @@ pub async fn random(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
         }
 use mongodb::{Client, bson::{Document, bson, doc, from_document}};
 use crate::db::connect_to_db;
-use futures::stream::{StreamExt, TryStreamExt};
+use futures::stream::{StreamExt};
 pub async fn get_random_post() -> Result<Post> {
 let db = connect_to_db().await?;
-let coll = db.collection::<Document>("posts");
+let _coll = db.collection::<Document>("posts");
 let match_aggr = doc!{
 
     "$match": {
