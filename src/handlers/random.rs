@@ -10,7 +10,7 @@ pub async fn random(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
                 .await?;
             Ok(())
         }
-use mongodb::{Client, bson::{Document, bson, doc, from_document}};
+use mongodb::{bson::{Document, doc, from_document}};
 use crate::db::connect_to_db;
 use futures::stream::{StreamExt};
 pub async fn get_random_post() -> Result<Post> {

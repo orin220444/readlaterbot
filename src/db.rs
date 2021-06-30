@@ -1,12 +1,9 @@
  use anyhow::Result;
 use mongodb::{
-    bson::Document,
     options::{
-        ClientOptions, FindOneAndDeleteOptions, FindOneAndUpdateOptions, FindOneOptions,
-        FindOptions, InsertOneOptions, UpdateModifications,
+        ClientOptions,
     },
-    results::InsertOneResult,
-    Client, Cursor, Database,
+    Client, Database,
 };
 
     pub async fn connect_to_db() -> Result<Database> {

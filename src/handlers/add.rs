@@ -64,7 +64,7 @@ async fn real_url(original_url: &str) -> String {
                 }
             };
             println!("{}", real_url);
-            if let Err(_) = Url::parse(&real_url) {
+            if Url::parse(&real_url).is_err() {
                 real_url = original_url.into();
             }
             real_url

@@ -65,11 +65,11 @@ async fn handle_callback_query(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>) -
         Some(data) => {
             // TODO: ref using enums
             if data.starts_with("del") {
-                crate::handlers::delete(cx, &data.strip_prefix("del ").unwrap()).await?;
+                crate::handlers::delete(cx, data.strip_prefix("del ").unwrap()).await?;
             } else if data.starts_with("archive") {
-                crate::handlers::archive(cx, &data.strip_prefix("archive ").unwrap()).await?;
+                crate::handlers::archive(cx, data.strip_prefix("archive ").unwrap()).await?;
             } else if data.starts_with("unarchive") {
-                crate::handlers::unarchive(cx, &data.strip_prefix("unarchive ").unwrap()).await?;
+                crate::handlers::unarchive(cx, data.strip_prefix("unarchive ").unwrap()).await?;
             }
         }
     }

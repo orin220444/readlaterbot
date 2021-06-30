@@ -25,7 +25,7 @@ fn entities_parse(entity: &MessageEntity, text: &String) -> Option<String> {
                 text.chars().skip(start).take(length).collect()
             };
             println!("{:#?}", url);
-            res = Some(url.to_string());
+            res = Some(url);
         }
         _ => println!("No needed entities!"),
     };
@@ -52,7 +52,7 @@ fn parse_media_kind(message_kind: &MessageKind, urls: &mut Vec<String>) {
                         None => String::default(),
                     };
                     println!("{:#?}", caption);
-                    if let Some(url) = entities_parse(&entity, &caption) {
+                    if let Some(url) = entities_parse(entity, &caption) {
                         urls.push(url);
                     }
                 }

@@ -1,7 +1,7 @@
 
 
 
-use mongodb::bson::{de::from_document, doc, ser::to_document};
+use mongodb::bson::{doc};
 use serde_derive::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 #[derive(Serialize, Deserialize, Debug, PartialEq)]

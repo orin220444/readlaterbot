@@ -25,7 +25,7 @@ pub async fn unarchive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &st
         .await?;
     cx.requester
         .edit_message_reply_markup(chat_id, message_id)
-        .reply_markup(standart_keyboard(&data))
+        .reply_markup(standart_keyboard(data))
         .await?;
     Ok(())
 }
@@ -39,7 +39,7 @@ fn clear_label(text: String) -> String {
 }
 use crate::db::connect_to_db;
 //use crate::post::Post;
-use mongodb::{bson::{doc, ser::to_document}, options::UpdateOptions};
+use mongodb::{bson::{doc}};
 use mongodb::bson::Document;
 async fn unarchive_post(data: &str) -> Result<()> {
     let db = connect_to_db().await?;
