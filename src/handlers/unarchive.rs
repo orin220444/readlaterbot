@@ -4,7 +4,7 @@ use anyhow::Result;
 use teloxide::prelude::*;
 
 pub async fn unarchive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &str) -> Result<()> {
-    Post::unarchive_post(data).await?;
+    unarchive_post(data).await?;
     let message_id = cx.update.message.clone().unwrap().id;
     let chat_id = cx.update.message.clone().unwrap().chat_id();
     let text = clear_label(
@@ -25,7 +25,7 @@ pub async fn unarchive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &st
         .await?;
     cx.requester
         .edit_message_reply_markup(chat_id, message_id)
-        .reply_markup(standart_keyboard(data.parse::<i64>().unwrap()))
+        .reply_markup(standart_keyboard(&data))
         .await?;
     Ok(())
 }
@@ -36,4 +36,22 @@ fn clear_label(text: String) -> String {
     } else {
         text
     }
+}
+use crate::db::connect_to_db;
+//use crate::post::Post;
+use mongodb::{bson::{doc, ser::to_document}, options::UpdateOptions};
+use mongodb::bson::Document;
+async fn unarchive_post(data: &str) -> Result<()> {
+    let db = connect_to_db().await?;
+    let coll = db.collection::<Document>("posts");
+    let query = doc!{
+        "_id": data
+    };
+    let update = doc! {
+        "$set": {
+            "read": false
+        }
+    };
+    coll.update_one(query, update, None).await?;
+    Ok(())
 }

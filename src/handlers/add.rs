@@ -19,12 +19,12 @@ pub async fn add(cx: UpdateWithCx<AutoSend<Bot>, Message>) -> Result<()> {
             .created(created)
             .read(false)
             .build();
-        match post.save_to_db().await {
+        match save_to_db(&post).await {
             Ok(id) => {
                 log::info!("Successful saved post");
                 match cx
                     .answer(url)
-                    .reply_markup(keyboards::standart_keyboard(id))
+                    .reply_markup(keyboards::standart_keyboard(&id))
                     .await
                 {
                     Ok(_) => {}
@@ -74,4 +74,19 @@ async fn real_url(original_url: &str) -> String {
 use chrono::prelude::Utc;
 fn created() -> String {
     Utc::now().to_string()
+}
+use crate::db::connect_to_db;
+use mongodb::bson::ser::to_document;
+use mongodb::bson::Document;
+async fn save_to_db(post: &PostBuilder) -> Result<String> {
+    let db = connect_to_db().await?;
+    let coll = db.collection::<Document>("posts");
+    let bson_res = coll.insert_one(to_document(post)?, None).await?;
+    //dbg!(bson_res);
+    let res = bson_res
+    .inserted_id
+    .as_object_id()
+    .unwrap()
+    .to_string();
+    Ok(res)
 }

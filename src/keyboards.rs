@@ -1,5 +1,5 @@
 use teloxide::types::{InlineKeyboardButton, InlineKeyboardButtonKind, InlineKeyboardMarkup};
-pub fn standart_keyboard(id: i64) -> InlineKeyboardMarkup {
+pub fn standart_keyboard(id: &str) -> InlineKeyboardMarkup {
     InlineKeyboardMarkup::default().append_row(vec![
         InlineKeyboardButton::new(
             "Delete",
@@ -11,7 +11,7 @@ pub fn standart_keyboard(id: i64) -> InlineKeyboardMarkup {
         ),
     ])
 }
-pub fn unarchive_keyboard(id: i64) -> InlineKeyboardMarkup {
+pub fn unarchive_keyboard(id: &str) -> InlineKeyboardMarkup {
     InlineKeyboardMarkup::default().append_row(vec![
         InlineKeyboardButton::new(
             "Delete",
