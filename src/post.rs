@@ -1,8 +1,5 @@
-
-
-
 use mongodb::bson::{doc, oid::ObjectId};
-use serde_derive::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Post {

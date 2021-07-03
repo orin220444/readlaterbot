@@ -1201,7 +1201,6 @@ dependencies = [
  "rand 0.8.4",
  "reqwest",
  "serde",
- "serde_derive",
  "teloxide",
  "tokio",
  "tokio-stream",
