@@ -15,12 +15,13 @@ pub async fn delete(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &str) 
     }
     Ok(())
 }
-use mongodb::bson::{Document, doc};
+use mongodb::bson::{Document, doc, oid::ObjectId};
 async fn delete_post(id: &str) -> Result<()> {
+    let obj_id = ObjectId::parse_str(id)?;
     let db = connect_to_db().await?;
     let coll = db.collection::<Document>("posts");
     let query = doc!{
-        "_id": id
+        "_id": obj_id
     };
     coll.delete_one(query, None).await?;
     Ok(())

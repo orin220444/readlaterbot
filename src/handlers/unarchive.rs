@@ -39,13 +39,14 @@ fn clear_label(text: String) -> String {
 }
 use crate::db::connect_to_db;
 //use crate::post::Post;
-use mongodb::{bson::{doc}};
+use mongodb::{bson::{doc, oid::ObjectId}};
 use mongodb::bson::Document;
-async fn unarchive_post(data: &str) -> Result<()> {
+async fn unarchive_post(id: &str) -> Result<()> {
+    let obj_id = ObjectId::parse_str(id)?;
     let db = connect_to_db().await?;
     let coll = db.collection::<Document>("posts");
     let query = doc!{
-        "_id": data
+        "_id": obj_id,
     };
     let update = doc! {
         "$set": {

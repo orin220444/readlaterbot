@@ -25,12 +25,13 @@ pub async fn archive(cx: UpdateWithCx<AutoSend<Bot>, CallbackQuery>, data: &str)
     Ok(())
 }
 use crate::db::connect_to_db;
-use mongodb::bson::{Document, doc};
+use mongodb::bson::{Document, doc, oid::ObjectId};
 async fn archive_post(id: &str)-> Result<()> {
+    let obj_id = ObjectId::parse_str(id)?;
     let db = connect_to_db().await?;
     let coll = db.collection::<Document>("posts");
     let query = doc!{
-        "_id": id.clone()
+        "_id": obj_id,
     };
     let update = doc! {
         "$set": {
