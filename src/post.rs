@@ -1,12 +1,13 @@
 
 
 
-use mongodb::bson::{doc};
+use mongodb::bson::{doc, oid::ObjectId};
 use serde_derive::{Deserialize, Serialize};
 use typed_builder::TypedBuilder;
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
 pub struct Post {
-    id: String,
+    #[serde(rename(deserialize = "_id"))]
+    id: ObjectId,
     pub original_url: String,
     pub real_url: String,
     pub read: bool,
@@ -15,7 +16,7 @@ pub struct Post {
 
 impl Post {
     pub fn id(&self) -> String {
-        self.id.clone()
+        self.id.clone().to_string()
     }
 }
 #[derive(TypedBuilder, Serialize)]
